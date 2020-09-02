@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import pathlib
 import webbrowser
 from datetime import datetime, timedelta
@@ -14,6 +15,7 @@ from pydantic import BaseModel
 from deezer.settings import DeezerSettings
 from deezer.utils import pprint_resp
 
+logger = logging.getLogger(__name__)
 _TOKEN_PATH = pathlib.Path(__file__).parent / '.token.dump'
 
 
@@ -51,18 +53,19 @@ class DeezerAuthenticator:
         return self._token and not self._token.is_expire
 
     @property
-    def token(self):
+    def token(self) -> str:
         if self._is_token_valid:
-            return self._token
+            return self._token.value
 
+        logger.debug('No valid token in memory found')
         token = Token.load()
         if token:
             self._token = token
 
         if self._is_token_valid:
-            return self._token
+            return self._token.value
 
-        print('Get new token')
+        logger.debug('No valid token in file found, get new one from deezer')
 
         params = {
             'app_id': self._settings.app_id,
@@ -75,14 +78,12 @@ class DeezerAuthenticator:
         try:
             token, seconds_left = _parse_deezer_response(resp)
         except Exception:
-            print(resp.text)
             raise
 
-        print(f'{seconds_left = }')
         self._token = Token(value=token, expire_time=datetime.now() + timedelta(seconds=seconds_left))
-        print(f'Got token, expires at {self._token.expire_time}')
+        logger.info(f'Got token, expires at {self._token.expire_time} after %s sec', seconds_left)
         self._token.dump()
-        return self._token
+        return self._token.value
 
     def user_info(self):
         resp = httpx.get(
@@ -92,7 +93,7 @@ class DeezerAuthenticator:
         resp.raise_for_status()
 
         info = resp.json()
-        pprint_resp(info)
+        pprint_resp(resp)
         if any(key not in info for key in ('id', 'email', 'type')):
             raise ValueError(f'Token is not valid, got json:\n{info}')
 

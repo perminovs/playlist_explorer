@@ -1,4 +1,5 @@
 import enum
+import logging
 
 import inquirer
 from pydantic import ValidationError
@@ -6,6 +7,8 @@ from pydantic import ValidationError
 from deezer.auth import DeezerAuthenticator
 from deezer.client import DeezerClient
 from deezer.settings import DeezerSettings
+
+logger = logging.getLogger(__name__)
 
 
 class DeezerOptions(str, enum.Enum):
@@ -15,10 +18,14 @@ class DeezerOptions(str, enum.Enum):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s]: %(message)s')
+
     try:
         settings = DeezerSettings()
+        logger.debug('Got settings without .env file')
     except ValidationError:
         settings = DeezerSettings(_env_file='.env')
+        logger.debug('Got settings from .env file')
 
     deezer_auth = DeezerAuthenticator(settings)
     client = DeezerClient(settings=settings, authenticator=deezer_auth)
