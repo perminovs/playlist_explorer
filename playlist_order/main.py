@@ -2,6 +2,7 @@ import enum
 import logging
 
 import inquirer
+import click
 from pydantic import ValidationError
 
 from deezer.auth import DeezerAuthenticator
@@ -17,8 +18,14 @@ class DeezerOptions(str, enum.Enum):
     PLAYLIST_INFO = 'Информация о плейлисте'
 
 
-def main():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s]: %(message)s')
+LOG_LEVELS = [logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR]
+_lvl2name = lambda x: logging._levelToName[x]
+
+
+@click.command()
+@click.option('--log-level', default=_lvl2name(logging.INFO), type=click.Choice([_lvl2name(n) for n in LOG_LEVELS]))
+def main(log_level):
+    logging.basicConfig(level=log_level, format='%(asctime)s [%(levelname)s]: %(message)s')
 
     try:
         settings = DeezerSettings()
@@ -42,7 +49,7 @@ def main():
             return
 
         func = mapping[option]
-        print(func())
+        func()
 
 
 def playlist_info(client: DeezerClient):
