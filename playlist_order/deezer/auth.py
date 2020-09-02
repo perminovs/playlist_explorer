@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+import json
+import pathlib
 import webbrowser
 from datetime import datetime, timedelta
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -5,25 +9,59 @@ from typing import Tuple, Optional
 
 import httpx
 from httpx import Response
+from pydantic import BaseModel
 
 from deezer.settings import DeezerSettings
 from deezer.utils import pprint_resp
+
+_TOKEN_PATH = pathlib.Path(__file__).parent / '.token.dump'
+
+
+class Token(BaseModel):
+    value: str
+    expire_time: datetime
+
+    @property
+    def is_expire(self):
+        return self.expire_time < datetime.now()
+
+    def dump(self) -> None:
+        with _TOKEN_PATH.open('w') as f:
+            json.dump(self.json(), f)
+
+    @classmethod
+    def load(cls) -> Optional[Token]:
+        if not _TOKEN_PATH.exists():
+            return None
+        with _TOKEN_PATH.open() as f:
+            try:
+                return cls(**json.loads(json.load(f)))
+            except Exception:
+                return None
 
 
 class DeezerAuthenticator:
     def __init__(self, settings: DeezerSettings):
         self._settings = settings
 
-        self._token: Optional[str] = None
-        self._expire_in: Optional[datetime] = None
+        self._token: Optional[Token] = None
+
+    @property
+    def _is_token_valid(self):
+        return self._token and not self._token.is_expire
 
     @property
     def token(self):
-        print(self._token)
-        print(self._expire_in)
-        print(datetime.now())
-        if self._token and self._expire_in and self._expire_in > datetime.now():
+        if self._is_token_valid:
             return self._token
+
+        token = Token.load()
+        if token:
+            self._token = token
+
+        if self._is_token_valid:
+            return self._token
+
         print('Get new token')
 
         params = {
@@ -41,10 +79,10 @@ class DeezerAuthenticator:
             raise
 
         print(f'{seconds_left = }')
-        self._token = token
-        self._expire_in = datetime.now() + timedelta(seconds=seconds_left)
-        print(f'Got token, expires at {self._expire_in}')
-        return token
+        self._token = Token(value=token, expire_time=datetime.now() + timedelta(seconds=seconds_left))
+        print(f'Got token, expires at {self._token.expire_time}')
+        self._token.dump()
+        return self._token
 
     def user_info(self):
         resp = httpx.get(
