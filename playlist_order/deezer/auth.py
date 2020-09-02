@@ -7,6 +7,7 @@ import httpx
 from httpx import Response
 
 from deezer.settings import DeezerSettings
+from deezer.utils import pprint_resp
 
 
 class DeezerAuthenticator:
@@ -45,7 +46,7 @@ class DeezerAuthenticator:
         print(f'Got token, expires at {self._expire_in}')
         return token
 
-    def ensure_auth(self):
+    def user_info(self):
         resp = httpx.get(
             self._settings.user_info_url,
             params={'access_token': self.token},
@@ -53,6 +54,7 @@ class DeezerAuthenticator:
         resp.raise_for_status()
 
         info = resp.json()
+        pprint_resp(info)
         if any(key not in info for key in ('id', 'email', 'type')):
             raise ValueError(f'Token is not valid, got json:\n{info}')
 

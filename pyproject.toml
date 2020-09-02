@@ -8,6 +8,7 @@ authors = ["persi <perminov-s-i@yandex.ru>"]
 python = "^3.8"
 httpx = "^0.14.2"
 pydantic = {extras = ["dotenv"], version = "^1.6.1"}
+inquirer = "^2.7.0"
 
 [tool.poetry.dev-dependencies]
 
