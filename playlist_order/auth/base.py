@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import abc
-
 import json
+import logging
 import pathlib
 import webbrowser
 from datetime import datetime
@@ -12,6 +12,9 @@ from typing import Optional
 from pydantic import BaseModel
 
 from auth.settings import BaseAuthSettings
+
+logger = logging.getLogger(__name__)
+_TOKEN_DIR = pathlib.Path(__file__).parent
 
 
 class Token(BaseModel):
@@ -41,10 +44,31 @@ class BaseAuthenticator(abc.ABC):
     def __init__(self, settings: BaseAuthSettings):
         self._settings = settings
         self._token: Optional[Token] = None
+        self._token_path = _TOKEN_DIR / f'{type(self).__name__}-token.dump'
 
     @property
-    @abc.abstractmethod
     def token(self) -> str:
+        if self._is_token_valid:
+            return self._token.value
+
+        logger.debug('No valid token in memory found')
+        token = Token.load(self._token_path)
+        if token:
+            self._token = token
+
+        if self._is_token_valid:
+            logger.debug('Dumped token found')
+            return self._token.value
+
+        logger.debug('No valid token in file found, get new one')
+
+        self._token = self._get_token()
+
+        self._token.dump(self._token_path)
+        return self._token.value
+
+    @abc.abstractmethod
+    def _get_token(self) -> Token:
         pass
 
     @property
@@ -58,7 +82,7 @@ class BaseAuthenticator(abc.ABC):
         class HttpHandler(BaseHTTPRequestHandler):
             def do_GET(handler):
                 nonlocal code
-                code = handler.path.replace('/?_code=', '')
+                code = handler.path.replace('/?code=', '')
 
                 handler.send_response(200)
                 handler.send_header('Content-type', 'text/html')
