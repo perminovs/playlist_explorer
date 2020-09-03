@@ -4,19 +4,28 @@ from typing import List
 import click
 import httpx
 
-from deezer.auth import DeezerAuthenticator
+from auth.deezer import DeezerAuthenticator
 from deezer.entities import PlaylistsResponse, PlaylistDetail, Playlist
 from deezer.settings import DeezerSettings
+from deezer.utils import pprint_resp
 
 
 class DeezerClient:
-    def __init__(
-        self,
-        settings: DeezerSettings,
-        authenticator: DeezerAuthenticator
-    ):
+    def __init__(self, settings: DeezerSettings, authenticator: DeezerAuthenticator):
         self._settings = settings
         self._authenticator = authenticator
+
+    def user_info(self):
+        resp = httpx.get(
+            self._settings.user_info_url,
+            params={'access_token': self._authenticator.token},
+        )
+        resp.raise_for_status()
+
+        info = resp.json()
+        pprint_resp(resp)
+        if any(key not in info for key in ('id', 'email', 'type')):
+            raise ValueError(f'Token is not valid, got json:\n{info}')
 
     @lru_cache()
     def get_playlist_list(self) -> List[Playlist]:
@@ -37,7 +46,7 @@ class DeezerClient:
                 target_playlist_id = playlist.id
                 break
         else:
-            found = ', '.join((f'<{p.title}>' for p in playlist_info.data))
+            found = ', '.join((f'<{p.title}>' for p in playlist_info))
             raise ValueError(f'Playlist {name} was not found\n{found}')
 
         resp = httpx.get(

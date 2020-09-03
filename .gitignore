@@ -40,4 +40,4 @@ tests/report/
 **/bootstrap
 
 .env
-*.token.dump
+*token.dump
