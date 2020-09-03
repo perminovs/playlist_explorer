@@ -6,7 +6,6 @@ import click
 import inquirer
 from pydantic import ValidationError
 
-from auth.base import AuthCodeGetter
 from auth.deezer import DeezerAuthenticator
 from auth.settings import DeezerAuthSettings, SpotifyAuthSettings
 from auth.spotify import SpotifyAuthenticator
@@ -29,6 +28,7 @@ class SpotifyOptions(str, enum.Enum):
     USER_INFO = 'Spotify: Информация о пользователе'
 
 
+EXIT = 'EXIT'
 LOG_LEVELS = [logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR]
 _lvl2name = lambda x: logging._levelToName[x]
 T = TypeVar('T')
@@ -50,14 +50,12 @@ def main(log_level):
     logging.basicConfig(level=log_level, format='%(asctime)s [%(levelname)s]: %(message)s')
 
     deezer_auth_settings = _create_settings(DeezerAuthSettings, '.env')
-    deezer_auth_code_getter = AuthCodeGetter(deezer_auth_settings)
-    deezer_auth = DeezerAuthenticator(deezer_auth_code_getter, deezer_auth_settings)
+    deezer_auth = DeezerAuthenticator(deezer_auth_settings)
     deezer_settings = DeezerSettings()
     deezer_client = DeezerClient(settings=deezer_settings, authenticator=deezer_auth)
 
     spotify_auth_settings = _create_settings(SpotifyAuthSettings, '.env')
-    spotify_auth_code_getter = AuthCodeGetter(spotify_auth_settings)
-    spotify_auth = SpotifyAuthenticator(spotify_auth_code_getter, spotify_auth_settings)
+    spotify_auth = SpotifyAuthenticator(spotify_auth_settings)
     settings = SpotifySettings()
     spotify_client = SpotifyClient(settings=settings, authenticator=spotify_auth)
 
@@ -69,9 +67,10 @@ def main(log_level):
         SpotifyOptions.USER_INFO: spotify_client.user_info,
     }
 
+    choices = list(DeezerOptions) + list(SpotifyOptions) + [EXIT]
     while True:
-        option = inquirer.list_input(message='Deezer', choices=list(DeezerOptions) + list(SpotifyOptions) + [None])
-        if not option:
+        option = inquirer.list_input(message='What to do?', choices=choices)
+        if not option or option == EXIT:
             return
 
         func = mapping[option]

@@ -3,29 +3,18 @@ from __future__ import annotations
 import logging
 import pathlib
 from datetime import datetime, timedelta
-from typing import Tuple, Optional
+from typing import Tuple
 
 import httpx
 from httpx import Response
 
-from auth.base import AuthCodeGetter, Token
-from auth.settings import DeezerAuthSettings
+from auth.base import Token, BaseAuthenticator
 
 logger = logging.getLogger(__name__)
 _TOKEN_PATH = pathlib.Path(__file__).parent / '.deezer-token.dump'
 
 
-class DeezerAuthenticator:
-    def __init__(self, auth_code_getter: AuthCodeGetter, settings: DeezerAuthSettings):
-        self._settings = settings
-        self._auth_code_getter = auth_code_getter
-
-        self._token: Optional[Token] = None
-
-    @property
-    def _is_token_valid(self):
-        return self._token and not self._token.is_expire
-
+class DeezerAuthenticator(BaseAuthenticator):
     @property
     def token(self) -> str:
         if self._is_token_valid:
@@ -45,7 +34,7 @@ class DeezerAuthenticator:
         params = {
             'app_id': self._settings.app_id,
             'secret': self._settings.secret_key,
-            'code': self._auth_code_getter.code,
+            'code': self._code,
         }
         resp = httpx.post(self._settings.token_url, data=params)
         resp.raise_for_status()

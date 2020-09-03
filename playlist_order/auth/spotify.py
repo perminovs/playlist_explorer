@@ -4,28 +4,16 @@ import logging
 import pathlib
 from base64 import b64encode
 from datetime import datetime, timedelta
-from typing import Optional
 
 import httpx
 
-from auth.base import AuthCodeGetter, Token
-from auth.settings import SpotifyAuthSettings
+from auth.base import Token, BaseAuthenticator
 
 logger = logging.getLogger(__name__)
 _TOKEN_PATH = pathlib.Path(__file__).parent / '.spotify-token.dump'
 
 
-class SpotifyAuthenticator:
-    def __init__(self, auth_code_getter: AuthCodeGetter, settings: SpotifyAuthSettings):
-        self._settings = settings
-        self._auth_code_getter = auth_code_getter
-
-        self._token: Optional[Token] = None
-
-    @property
-    def _is_token_valid(self):
-        return self._token and not self._token.is_expire
-
+class SpotifyAuthenticator(BaseAuthenticator):
     @property
     def token(self) -> str:
         if self._is_token_valid:
@@ -45,7 +33,7 @@ class SpotifyAuthenticator:
         _auth = b64encode((self._settings.app_id + ':' + self._settings.secret_key).encode()).decode()
         headers = {'Authorization': f'Basic {_auth}'}
         payload = {
-            'code': self._auth_code_getter.code,
+            'code': self._code,
             'redirect_uri': f'{self._settings.redirect_host}:{self._settings.redirect_port}',
             'grant_type': 'authorization_code'
         }
