@@ -1,7 +1,7 @@
 import httpx
 
 from auth.spotify import SpotifyAuthenticator
-from deezer.utils import pprint_resp
+from utils import pprint_resp
 from spotify.settings import SpotifySettings
 
 

@@ -7,7 +7,7 @@ import httpx
 from auth.deezer import DeezerAuthenticator
 from deezer.entities import PlaylistsResponse, PlaylistDetail, Playlist
 from deezer.settings import DeezerSettings
-from deezer.utils import pprint_resp
+from utils import pprint_resp
 
 
 class DeezerClient:
