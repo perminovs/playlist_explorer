@@ -83,10 +83,13 @@ class BaseAuthenticator(abc.ABC):
             def do_GET(handler):
                 nonlocal code
                 code = handler.path.replace('/?code=', '')
+                response_body = '<h3>dude, u can close the tab now and return to terminal</h3>'
 
                 handler.send_response(200)
-                handler.send_header('Content-type', 'text/html')
+                handler.send_header("Content-Type", "text/html")
+                handler.send_header("Content-Length", str(len(response_body)))
                 handler.end_headers()
+                handler.wfile.write(response_body.encode())
 
         server_address = ('', self._settings.redirect_port)
         httpd = HTTPServer(server_address, HttpHandler)
