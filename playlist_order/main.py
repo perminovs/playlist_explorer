@@ -11,11 +11,17 @@ from playlist_order.deezer.client import DeezerClient
 from playlist_order.deezer.settings import DeezerSettings
 from playlist_order.spotify.client import SpotifyClient
 from playlist_order.spotify.settings import SpotifySettings
-from playlist_order.utils import create_settings
+from playlist_order.utils import MenuItem, Stack, create_settings
 
 app = typer.Typer()
 logger = logging.getLogger(__name__)
 EXIT = 'EXIT'
+BACK = 'BACK'
+
+
+class TopLevelMenu(str, enum.Enum):
+    DEEZER = 'Deezer'
+    SPOTIFY = 'Spotify'
 
 
 class DeezerOptions(str, enum.Enum):
@@ -50,22 +56,51 @@ def main(log_level: LogLevel = LogLevel.INFO) -> None:
     settings = SpotifySettings()
     spotify_client = SpotifyClient(settings=settings, authenticator=spotify_auth)
 
-    mapping = {
-        DeezerOptions.AUTH: lambda: deezer_auth.token,
-        DeezerOptions.USER_INFO: deezer_client.user_info,
-        DeezerOptions.PLAYLIST_INFO: lambda: playlist_info(deezer_client),
-        SpotifyOptions.AUTH: lambda: spotify_auth.token,
-        SpotifyOptions.USER_INFO: spotify_client.user_info,
-    }
+    deezer_menu = MenuItem(
+        title='What to do with Deezer?',
+        choices={
+            DeezerOptions.AUTH: lambda: deezer_auth.token,
+            DeezerOptions.USER_INFO: deezer_client.user_info,
+            DeezerOptions.PLAYLIST_INFO: lambda: playlist_info(deezer_client),
+        },
+    )
+    spotify_menu = MenuItem(
+        title='What to do with Spotify?',
+        choices={
+            SpotifyOptions.AUTH: lambda: spotify_auth.token,
+            SpotifyOptions.USER_INFO: spotify_client.user_info,
+        },
+    )
+    top_level_menu = MenuItem(
+        title='What to do?',
+        choices={
+            TopLevelMenu.DEEZER: deezer_menu,
+            TopLevelMenu.SPOTIFY: spotify_menu,
+        },
+    )
 
-    choices = list(DeezerOptions) + list(SpotifyOptions) + [EXIT]  # type: ignore
+    menu_history = Stack()
+    current_menu = top_level_menu
     while True:
-        option = inquirer.list_input(message='What to do?', choices=choices)
+        additional_choices = [EXIT] if menu_history.is_empty() else [BACK, EXIT]
+        choices = list(current_menu.choices) + additional_choices  # type: ignore
+        option = inquirer.list_input(message=current_menu.title, choices=choices)
         if not option or option == EXIT:
             return
 
-        func = mapping[option]
-        func()
+        if option == BACK:
+            current_menu = menu_history.pop()
+            continue
+
+        chosen = current_menu.choices[option]
+
+        if isinstance(chosen, MenuItem):
+            menu_history.push(current_menu)
+            current_menu = chosen
+        elif callable(chosen):
+            chosen()
+        else:
+            raise RuntimeError('Option not found')
 
 
 def playlist_info(client: DeezerClient) -> None:
