@@ -2,7 +2,7 @@ import enum
 import logging
 from typing import Type, TypeVar
 
-import click
+import typer
 import inquirer
 from pydantic import ValidationError
 
@@ -14,7 +14,10 @@ from deezer.settings import DeezerSettings
 from spotify.client import SpotifyClient
 from spotify.settings import SpotifySettings
 
+app = typer.Typer()
 logger = logging.getLogger(__name__)
+EXIT = 'EXIT'
+T = TypeVar('T')
 
 
 class DeezerOptions(str, enum.Enum):
@@ -28,10 +31,11 @@ class SpotifyOptions(str, enum.Enum):
     USER_INFO = 'Spotify: Информация о пользователе'
 
 
-EXIT = 'EXIT'
-LOG_LEVELS = [logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR]
-_lvl2name = lambda x: logging._levelToName[x]
-T = TypeVar('T')
+class LogLevel(str, enum.Enum):
+    DEBUG = logging._levelToName[logging.DEBUG]
+    INFO = logging._levelToName[logging.INFO]
+    WARNING = logging._levelToName[logging.WARNING]
+    ERROR = logging._levelToName[logging.ERROR]
 
 
 def _create_settings(settings_cls: Type[T], env_file: str) -> T:
@@ -44,10 +48,9 @@ def _create_settings(settings_cls: Type[T], env_file: str) -> T:
     return settings
 
 
-@click.command()
-@click.option('--log-level', default=_lvl2name(logging.INFO), type=click.Choice([_lvl2name(n) for n in LOG_LEVELS]))
-def main(log_level):
-    logging.basicConfig(level=log_level, format='%(asctime)s [%(levelname)s]: %(message)s')
+@app.command()
+def main(log_level: LogLevel = LogLevel.INFO):
+    logging.basicConfig(level=log_level.value, format='%(asctime)s [%(levelname)s]: %(message)s')
 
     deezer_auth_settings = _create_settings(DeezerAuthSettings, '.env')
     deezer_auth = DeezerAuthenticator(deezer_auth_settings)
@@ -84,4 +87,4 @@ def playlist_info(client: DeezerClient):
 
 
 if __name__ == '__main__':
-    main()
+    app()

@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import List
 
-import click
+import typer
 import httpx
 
 from auth.deezer import DeezerAuthenticator
@@ -56,4 +56,4 @@ class DeezerClient:
         resp.raise_for_status()
         target_playlist: PlaylistDetail = PlaylistDetail.parse_obj(resp.json())
         for track in target_playlist.tracks.data:
-            click.secho(str(track), fg='white')
+            typer.secho(str(track), fg='white')
