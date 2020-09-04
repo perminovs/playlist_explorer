@@ -3,6 +3,8 @@ import logging
 
 import inquirer
 import typer
+from inquirer.render import ConsoleRender
+from inquirer.themes import GreenPassion, term
 
 from playlist_order.auth.deezer import DeezerAuthenticator
 from playlist_order.auth.settings import DeezerAuthSettings, SpotifyAuthSettings
@@ -15,6 +17,11 @@ from playlist_order.utils import MenuItem, Stack, create_settings
 
 app = typer.Typer()
 logger = logging.getLogger(__name__)
+
+theme = GreenPassion()
+theme.List.unselected_color = term.yellow
+render = ConsoleRender(theme=theme)
+
 EXIT = 'EXIT'
 BACK = 'BACK'
 
@@ -25,14 +32,14 @@ class TopLevelMenu(str, enum.Enum):
 
 
 class DeezerOptions(str, enum.Enum):
-    AUTH = 'Deezer: Авторизация'
-    USER_INFO = 'Deezer: Информация о пользователе'
-    PLAYLIST_INFO = 'Deezer: Информация о плейлисте'
+    AUTH = 'Авторизация'
+    USER_INFO = 'Информация о пользователе'
+    PLAYLIST_INFO = 'Информация о плейлисте'
 
 
 class SpotifyOptions(str, enum.Enum):
-    AUTH = 'Spotify: Авторизация'
-    USER_INFO = 'Spotify: Информация о пользователе'
+    AUTH = 'Авторизация'
+    USER_INFO = 'Информация о пользователе'
 
 
 class LogLevel(str, enum.Enum):
@@ -84,7 +91,7 @@ def main(log_level: LogLevel = LogLevel.INFO) -> None:
     while True:
         additional_choices = [EXIT] if menu_history.is_empty() else [BACK, EXIT]
         choices = list(current_menu.choices) + additional_choices  # type: ignore
-        option = inquirer.list_input(message=current_menu.title, choices=choices)
+        option = inquirer.list_input(message=current_menu.title, choices=choices, render=render)
         if not option or option == EXIT:
             return
 
