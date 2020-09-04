@@ -2,17 +2,17 @@ import enum
 import logging
 from typing import Type, TypeVar
 
-import typer
 import inquirer
+import typer
 from pydantic import ValidationError
 
-from auth.deezer import DeezerAuthenticator
-from auth.settings import DeezerAuthSettings, SpotifyAuthSettings
-from auth.spotify import SpotifyAuthenticator
-from deezer.client import DeezerClient
-from deezer.settings import DeezerSettings
-from spotify.client import SpotifyClient
-from spotify.settings import SpotifySettings
+from playlist_order.auth.deezer import DeezerAuthenticator
+from playlist_order.auth.settings import DeezerAuthSettings, SpotifyAuthSettings
+from playlist_order.auth.spotify import SpotifyAuthenticator
+from playlist_order.deezer.client import DeezerClient
+from playlist_order.deezer.settings import DeezerSettings
+from playlist_order.spotify.client import SpotifyClient
+from playlist_order.spotify.settings import SpotifySettings
 
 app = typer.Typer()
 logger = logging.getLogger(__name__)
@@ -43,13 +43,13 @@ def _create_settings(settings_cls: Type[T], env_file: str) -> T:
         settings = settings_cls()
         logger.debug('Got settings %s without .env file', settings_cls)
     except ValidationError:
-        settings = settings_cls(_env_file=env_file)
+        settings = settings_cls(_env_file=env_file)  # type: ignore
         logger.debug('Got settings %s from .env file', settings_cls)
-    return settings
+    return settings  # noqa R504
 
 
 @app.command()
-def main(log_level: LogLevel = LogLevel.INFO):
+def main(log_level: LogLevel = LogLevel.INFO) -> None:
     logging.basicConfig(level=log_level.value, format='%(asctime)s [%(levelname)s]: %(message)s')
 
     deezer_auth_settings = _create_settings(DeezerAuthSettings, '.env')
@@ -70,7 +70,7 @@ def main(log_level: LogLevel = LogLevel.INFO):
         SpotifyOptions.USER_INFO: spotify_client.user_info,
     }
 
-    choices = list(DeezerOptions) + list(SpotifyOptions) + [EXIT]
+    choices = list(DeezerOptions) + list(SpotifyOptions) + [EXIT]  # type: ignore
     while True:
         option = inquirer.list_input(message='What to do?', choices=choices)
         if not option or option == EXIT:
@@ -80,7 +80,7 @@ def main(log_level: LogLevel = LogLevel.INFO):
         func()
 
 
-def playlist_info(client: DeezerClient):
+def playlist_info(client: DeezerClient) -> None:
     playlists = client.get_playlist_list()
     target = inquirer.list_input('Which one?', choices=[p.title for p in playlists])
     client.get_playlist_info(target)

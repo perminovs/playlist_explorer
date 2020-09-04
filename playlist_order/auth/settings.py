@@ -18,11 +18,11 @@ class BaseAuthSettings(BaseSettings, abc.ABC):
 
     @property
     @abc.abstractmethod
-    def code_url(self):
+    def code_url(self) -> str:
         pass
 
     @property
-    def token_url(self):
+    def token_url(self) -> str:
         return f'{self.service_host}/{self.token_path}'
 
 
@@ -35,12 +35,14 @@ class DeezerAuthSettings(BaseAuthSettings):
     token_path: str = 'oauth/access_token.php'
 
     @property
-    def code_url(self):
-        _params = urlencode({
-            'app_id': self.app_id,
-            'redirect_uri': f'{self.redirect_host}:{self.redirect_port}',
-            'perms': self.permissions,
-        })
+    def code_url(self) -> str:
+        _params = urlencode(
+            {
+                'app_id': self.app_id,
+                'redirect_uri': f'{self.redirect_host}:{self.redirect_port}',
+                'perms': self.permissions,
+            }
+        )
         return f'{self.service_host}/{self.code_path}?{_params}'
 
     class Config:
@@ -56,13 +58,15 @@ class SpotifyAuthSettings(BaseAuthSettings):
     token_path: str = 'api/token'
 
     @property
-    def code_url(self):
-        _params = urlencode({
-            'response_type': 'code',
-            'client_id': self.app_id,
-            'scopes': self.permissions,
-            'redirect_uri': f'{self.redirect_host}:{self.redirect_port}',
-        })
+    def code_url(self) -> str:
+        _params = urlencode(
+            {
+                'response_type': 'code',
+                'client_id': self.app_id,
+                'scopes': self.permissions,
+                'redirect_uri': f'{self.redirect_host}:{self.redirect_port}',
+            }
+        )
         return f'https://accounts.spotify.com/authorize?{_params}'
 
     class Config:

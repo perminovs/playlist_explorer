@@ -6,19 +6,20 @@ from datetime import datetime, timedelta
 
 import httpx
 
-from auth.base import Token, BaseAuthenticator
+from playlist_order.auth.base import BaseAuthenticator, Token
 
 logger = logging.getLogger(__name__)
 
 
 class SpotifyAuthenticator(BaseAuthenticator):
     def _get_token(self) -> Token:
-        _auth = b64encode((self._settings.app_id + ':' + self._settings.secret_key).encode()).decode()
+        creds = self._settings.app_id + ':' + self._settings.secret_key
+        _auth = b64encode(creds.encode()).decode()
         headers = {'Authorization': f'Basic {_auth}'}
         payload = {
             'code': self._code,
             'redirect_uri': f'{self._settings.redirect_host}:{self._settings.redirect_port}',
-            'grant_type': 'authorization_code'
+            'grant_type': 'authorization_code',
         }
         resp = httpx.post(self._settings.token_url, data=payload, headers=headers)
         resp.raise_for_status()
@@ -31,5 +32,5 @@ class SpotifyAuthenticator(BaseAuthenticator):
             raise
 
         token = Token(value=token_, expire_time=datetime.now() + timedelta(seconds_left))
-        logger.info(f'Got token, expires at {token.expire_time} after %s sec', seconds_left)
+        logger.info('Got token, expires at %s after %s sec', token.expire_time, seconds_left)
         return token

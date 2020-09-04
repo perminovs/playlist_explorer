@@ -7,7 +7,7 @@ from typing import Tuple
 import httpx
 from httpx import Response
 
-from auth.base import Token, BaseAuthenticator
+from playlist_order.auth.base import BaseAuthenticator, Token
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +23,13 @@ class DeezerAuthenticator(BaseAuthenticator):
         resp.raise_for_status()
 
         try:
-            token, seconds_left = _parse_deezer_response(resp)
+            value, seconds_left = _parse_deezer_response(resp)
         except Exception:
             logger.warning('Unknown deezer response\n%s', resp.text)
             raise
 
-        token = Token(value=token, expire_time=datetime.now() + timedelta(seconds=seconds_left))
-        logger.info(f'Got token, expires at {token.expire_time} after %s sec', seconds_left)
+        token = Token(value=value, expire_time=datetime.now() + timedelta(seconds=seconds_left))
+        logger.info('Got token, expires at %s after %s sec', token.expire_time, seconds_left)
         return token
 
 
@@ -38,5 +38,5 @@ def _parse_deezer_response(response: Response) -> Tuple[str, int]:
     resp_text = resp_text.replace('access_token=', '')
     idx = resp_text.rfind('&expires=')
     token = resp_text[:idx]
-    seconds_left = int(resp_text[idx + len('&expires='):])
+    seconds_left = int(resp_text[idx + len('&expires=') :])
     return token, seconds_left

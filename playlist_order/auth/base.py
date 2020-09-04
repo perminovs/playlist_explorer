@@ -7,11 +7,12 @@ import pathlib
 import webbrowser
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from json import JSONDecodeError
 from typing import Optional
 
 from pydantic import BaseModel
 
-from auth.settings import BaseAuthSettings
+from playlist_order.auth.settings import BaseAuthSettings
 
 logger = logging.getLogger(__name__)
 _TOKEN_DIR = pathlib.Path(__file__).parent
@@ -22,7 +23,7 @@ class Token(BaseModel):
     expire_time: datetime
 
     @property
-    def is_expire(self):
+    def is_expire(self) -> bool:
         return self.expire_time < datetime.now()
 
     def dump(self, path: pathlib.Path) -> None:
@@ -36,12 +37,12 @@ class Token(BaseModel):
         with path.open() as f:
             try:
                 return cls(**json.loads(json.load(f)))
-            except Exception:
+            except JSONDecodeError:
                 return None
 
 
 class BaseAuthenticator(abc.ABC):
-    def __init__(self, settings: BaseAuthSettings):
+    def __init__(self, settings: BaseAuthSettings) -> None:
         self._settings = settings
         self._token: Optional[Token] = None
         self._token_path = _TOKEN_DIR / f'{type(self).__name__}-token.dump'
@@ -49,7 +50,7 @@ class BaseAuthenticator(abc.ABC):
     @property
     def token(self) -> str:
         if self._is_token_valid:
-            return self._token.value
+            return self._token.value  # type: ignore
 
         logger.debug('No valid token in memory found')
         token = Token.load(self._token_path)
@@ -58,7 +59,7 @@ class BaseAuthenticator(abc.ABC):
 
         if self._is_token_valid:
             logger.debug('Dumped token found')
-            return self._token.value
+            return self._token.value  # type: ignore
 
         logger.debug('No valid token in file found, get new one')
 
@@ -72,15 +73,15 @@ class BaseAuthenticator(abc.ABC):
         pass
 
     @property
-    def _is_token_valid(self):
-        return self._token and not self._token.is_expire
+    def _is_token_valid(self) -> bool:
+        return bool(self._token and not self._token.is_expire)
 
     @property
-    def _code(self):
+    def _code(self) -> str:
         code = None
 
         class HttpHandler(BaseHTTPRequestHandler):
-            def do_GET(handler):
+            def do_GET(handler) -> None:  # noqa N805, N802
                 nonlocal code
                 code = handler.path.replace('/?code=', '')
                 response_body = '<h3>dude, u can close the tab now and return to terminal</h3>'
@@ -97,4 +98,6 @@ class BaseAuthenticator(abc.ABC):
         webbrowser.open(self._settings.code_url, new=2)
         httpd.handle_request()
 
+        if code is None:
+            raise RuntimeError('Auth failed, something went wrong')
         return code
