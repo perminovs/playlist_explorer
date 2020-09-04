@@ -1,10 +1,8 @@
 import enum
 import logging
-from typing import Type, TypeVar
 
 import inquirer
 import typer
-from pydantic import ValidationError
 
 from playlist_order.auth.deezer import DeezerAuthenticator
 from playlist_order.auth.settings import DeezerAuthSettings, SpotifyAuthSettings
@@ -13,11 +11,11 @@ from playlist_order.deezer.client import DeezerClient
 from playlist_order.deezer.settings import DeezerSettings
 from playlist_order.spotify.client import SpotifyClient
 from playlist_order.spotify.settings import SpotifySettings
+from playlist_order.utils import create_settings
 
 app = typer.Typer()
 logger = logging.getLogger(__name__)
 EXIT = 'EXIT'
-T = TypeVar('T')
 
 
 class DeezerOptions(str, enum.Enum):
@@ -38,26 +36,16 @@ class LogLevel(str, enum.Enum):
     ERROR = logging._levelToName[logging.ERROR]
 
 
-def _create_settings(settings_cls: Type[T], env_file: str) -> T:
-    try:
-        settings = settings_cls()
-        logger.debug('Got settings %s without .env file', settings_cls)
-    except ValidationError:
-        settings = settings_cls(_env_file=env_file)  # type: ignore
-        logger.debug('Got settings %s from .env file', settings_cls)
-    return settings  # noqa R504
-
-
 @app.command()
 def main(log_level: LogLevel = LogLevel.INFO) -> None:
     logging.basicConfig(level=log_level.value, format='%(asctime)s [%(levelname)s]: %(message)s')
 
-    deezer_auth_settings = _create_settings(DeezerAuthSettings, '.env')
+    deezer_auth_settings = create_settings(DeezerAuthSettings, '.env')
     deezer_auth = DeezerAuthenticator(deezer_auth_settings)
     deezer_settings = DeezerSettings()
     deezer_client = DeezerClient(settings=deezer_settings, authenticator=deezer_auth)
 
-    spotify_auth_settings = _create_settings(SpotifyAuthSettings, '.env')
+    spotify_auth_settings = create_settings(SpotifyAuthSettings, '.env')
     spotify_auth = SpotifyAuthenticator(spotify_auth_settings)
     settings = SpotifySettings()
     spotify_client = SpotifyClient(settings=settings, authenticator=spotify_auth)

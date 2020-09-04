@@ -7,7 +7,7 @@ import typer
 from playlist_order.auth.deezer import DeezerAuthenticator
 from playlist_order.deezer.entities import Playlist, PlaylistDetail, PlaylistsResponse
 from playlist_order.deezer.settings import DeezerSettings
-from playlist_order.utils import pprint_resp
+from playlist_order.utils import pprint_json
 
 
 class DeezerClient:
@@ -23,7 +23,7 @@ class DeezerClient:
         resp.raise_for_status()
 
         info = resp.json()
-        pprint_resp(info)
+        pprint_json(info)
         if any(key not in info for key in ('id', 'email', 'type')):
             raise ValueError(f'Token is not valid, got json:\n{info}')
 

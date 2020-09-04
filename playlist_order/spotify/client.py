@@ -2,7 +2,7 @@ import httpx
 
 from playlist_order.auth.spotify import SpotifyAuthenticator
 from playlist_order.spotify.settings import SpotifySettings
-from playlist_order.utils import pprint_resp
+from playlist_order.utils import pprint_json
 
 
 class SpotifyClient:
@@ -13,4 +13,4 @@ class SpotifyClient:
     def user_info(self) -> None:
         me = httpx.get(self._settings.user_info_url, headers={'Authorization': f'Bearer {self._authenticator.token}'})
         me.raise_for_status()
-        pprint_resp(me.json())
+        pprint_json(me.json())
