@@ -25,12 +25,12 @@ class SpotifyAuthenticator(BaseAuthenticator):
         resp.raise_for_status()
         json_data = resp.json()
         try:
-            token_ = json_data['access_token']
+            access_token = json_data['access_token']
             seconds_left = json_data['expires_in']
         except KeyError:
             logger.warning('Unknown spotify response\n%s', json_data)
             raise
 
-        token = Token(value=token_, expire_time=datetime.now() + timedelta(seconds_left))
+        token = Token(value=access_token, expire_time=datetime.now() + timedelta(seconds_left))
         logger.info('Got token, expires at %s after %s sec', token.expire_time, seconds_left)
         return token

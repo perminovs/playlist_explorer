@@ -68,7 +68,7 @@ def main(log_level: LogLevel = LogLevel.INFO) -> None:
         choices={
             DeezerOptions.AUTH: lambda: deezer_auth.token,
             DeezerOptions.USER_INFO: deezer_client.user_info,
-            DeezerOptions.PLAYLIST_INFO: lambda: playlist_info(deezer_client),
+            DeezerOptions.PLAYLIST_INFO: lambda: deezer_playlist_info(deezer_client),
         },
     )
     spotify_menu = MenuItem(
@@ -86,8 +86,12 @@ def main(log_level: LogLevel = LogLevel.INFO) -> None:
         },
     )
 
+    run_menu_loop(start_menu=top_level_menu)
+
+
+def run_menu_loop(start_menu: MenuItem):
+    current_menu = start_menu
     menu_history = Stack()
-    current_menu = top_level_menu
     while True:
         additional_choices = [EXIT] if menu_history.is_empty() else [BACK, EXIT]
         choices = list(current_menu.choices) + additional_choices  # type: ignore
@@ -110,7 +114,7 @@ def main(log_level: LogLevel = LogLevel.INFO) -> None:
             raise RuntimeError('Option not found')
 
 
-def playlist_info(client: DeezerClient) -> None:
+def deezer_playlist_info(client: DeezerClient) -> None:
     playlists = client.get_playlist_list()
     target = inquirer.list_input('Which one?', choices=[p.title for p in playlists])
     client.get_playlist_info(target)
