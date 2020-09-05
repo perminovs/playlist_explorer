@@ -31,5 +31,5 @@ By now it works (**to be honest it doesn't work, it's still WIP**) only with Dee
 
 #### Run
 ```bash
-python organizer/main.py
+python organizer/entrypoint.py
 ```

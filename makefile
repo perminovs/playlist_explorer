@@ -1,5 +1,5 @@
 BIN = .venv/bin/
-CODE = playlist_order
+CODE = organizer
 
 lint:
 	$(BIN)flake8 --jobs 4 --statistics --show-source $(CODE)
