@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel
@@ -16,10 +17,16 @@ class Album(BaseModel):
     id: int
     title: str
 
+    def __str__(self) -> str:
+        return self.title
+
 
 class Artist(BaseModel):
     id: int
     name: str
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Track(BaseModel):
@@ -28,6 +35,9 @@ class Track(BaseModel):
     time_add: int
     album: Album
     artist: Artist
+
+    def __str__(self) -> str:
+        return f'{self.artist} - {self.title} ({self.album}) [added: {datetime.fromtimestamp(self.time_add)}]'
 
 
 class TrackList(BaseModel):

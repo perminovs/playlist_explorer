@@ -1,6 +1,7 @@
 import enum
 import logging
 
+import httpcore
 import inquirer
 import typer
 from inquirer.render import ConsoleRender
@@ -59,7 +60,10 @@ def run_menu_loop(start_menu: MenuItem) -> None:
             menu_history.push(current_menu)
             current_menu = chosen
         elif callable(chosen):
-            chosen()
+            try:
+                chosen()
+            except httpcore.ConnectError:
+                logger.exception('Error while request')
         else:
             raise RuntimeError('Option not found')
 

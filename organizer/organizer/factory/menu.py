@@ -9,6 +9,7 @@ import typer
 
 from organizer.deezer.client import DeezerClient
 from organizer.factory.clients import ClientFactory
+from organizer.spotify.client import SpotifyClient
 
 MenuAction = Callable[[], None]
 
@@ -37,6 +38,7 @@ class DeezerOptions(str, enum.Enum):
 class SpotifyOptions(str, enum.Enum):
     AUTH = 'Authentication'
     USER_INFO = 'User info'
+    PLAYLIST_INFO = 'Playlist info'
 
 
 def build_menu(client_factory: ClientFactory) -> MenuItem:
@@ -45,7 +47,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
         choices={
             DeezerOptions.AUTH: lambda: auth_func(client_factory.deezer_auth.token),
             DeezerOptions.USER_INFO: client_factory.deezer_client.user_info,
-            DeezerOptions.PLAYLIST_INFO: lambda: deezer_playlist_info(client_factory.deezer_client),
+            DeezerOptions.PLAYLIST_INFO: lambda: playlist_tracks(client_factory.deezer_client),
         },
     )
     spotify_menu = MenuItem(
@@ -53,6 +55,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
         choices={
             SpotifyOptions.AUTH: lambda: auth_func(client_factory.spotify_auth.token),
             SpotifyOptions.USER_INFO: client_factory.spotify_client.user_info,
+            SpotifyOptions.PLAYLIST_INFO: lambda: playlist_tracks(client_factory.spotify_client),
         },
     )
     return MenuItem(
@@ -64,7 +67,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
     )
 
 
-def deezer_playlist_info(client: DeezerClient) -> None:
+def playlist_tracks(client: Union[DeezerClient, SpotifyClient]) -> None:
     playlists = client.get_playlist_list()
     target = inquirer.list_input('Which one?', choices=[p.title for p in playlists])
     client.get_playlist_info(target)

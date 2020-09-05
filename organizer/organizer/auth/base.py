@@ -95,7 +95,9 @@ class BaseAuthenticator(abc.ABC):
         server_address = ('', self._settings.redirect_port)
         httpd = HTTPServer(server_address, HttpHandler)
 
-        webbrowser.open(self._settings.code_url, new=2)
+        code_url = self._settings.code_url
+        logger.debug('Open %s', code_url)
+        webbrowser.open(code_url, new=2)
         httpd.handle_request()
 
         if code is None:

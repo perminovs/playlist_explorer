@@ -30,6 +30,8 @@ class DeezerAuthSettings(BaseAuthSettings):
     redirect_port: int = 8912
     redirect_host: str = 'http://localhost'
 
+    permissions: str = 'basic_access,email,manage_library'
+
     service_host: str = 'https://connect.deezer.com'
     code_path: str = 'oauth/auth.php'
     token_path: str = 'oauth/access_token.php'
@@ -53,6 +55,8 @@ class SpotifyAuthSettings(BaseAuthSettings):
     redirect_port: int = 8000
     redirect_host: str = 'http://localhost'
 
+    permissions: str = 'user-read-private user-read-email playlist-read-private'
+
     service_host: str = 'https://accounts.spotify.com'
     code_path: str = 'authorize'
     token_path: str = 'api/token'
@@ -63,7 +67,7 @@ class SpotifyAuthSettings(BaseAuthSettings):
             {
                 'response_type': 'code',
                 'client_id': self.app_id,
-                'scopes': self.permissions,
+                'scope': self.permissions,
                 'redirect_uri': f'{self.redirect_host}:{self.redirect_port}',
             }
         )
