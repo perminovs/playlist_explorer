@@ -28,7 +28,7 @@ class Token(BaseModel):
 
     def dump(self, path: pathlib.Path) -> None:
         with path.open('w') as f:
-            json.dump(self.json(), f)
+            json.dump(self.json(), f, ensure_ascii=False, indent=4, sort_keys=True)
 
     @classmethod
     def load(cls, path: pathlib.Path) -> Optional[Token]:

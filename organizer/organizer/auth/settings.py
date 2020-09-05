@@ -55,7 +55,7 @@ class SpotifyAuthSettings(BaseAuthSettings):
     redirect_port: int = 8000
     redirect_host: str = 'http://localhost'
 
-    permissions: str = 'user-read-private user-read-email playlist-read-private'
+    permissions: str = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative'
 
     service_host: str = 'https://accounts.spotify.com'
     code_path: str = 'authorize'

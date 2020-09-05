@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class Playlist(BaseModel):
-    id: int
+    id: str
     title: str
 
 

@@ -1,5 +1,5 @@
-from functools import lru_cache
-from typing import List
+from functools import cached_property, lru_cache
+from typing import Any, Dict, List
 
 import httpx
 import typer
@@ -16,16 +16,16 @@ class DeezerClient:
         self._authenticator = authenticator
 
     def user_info(self) -> None:
+        pprint_json(self._user_info)
+
+    @cached_property
+    def _user_info(self) -> Dict[str, Any]:
         resp = httpx.get(
             self._settings.user_info_url,
             params={'access_token': self._authenticator.token},
         )
         resp.raise_for_status()
-
-        info = resp.json()
-        pprint_json(info)
-        if any(key not in info for key in ('id', 'email', 'type')):
-            raise ValueError(f'Token is not valid, got json:\n{info}')
+        return resp.json()
 
     @lru_cache()
     def get_playlist_list(self) -> List[Playlist]:
@@ -38,22 +38,22 @@ class DeezerClient:
         return playlist_info.data
 
     @lru_cache()
-    def get_playlist_info(self, name: str) -> None:
-        playlist_info = self.get_playlist_list()
-
-        for playlist in playlist_info:
+    def _playlist_id_by_name(self, name: str) -> str:
+        for playlist in self.get_playlist_list():
             if playlist.title == name:
-                target_playlist_id = playlist.id
-                break
-        else:
-            found = ', '.join((f'<{p.title}>' for p in playlist_info))
-            raise ValueError(f'Playlist {name} was not found\n{found}')
+                return playlist.id
+
+        raise ValueError(f'Playlist "{name}" was not found')
+
+    def get_playlist_info(self, name: str) -> None:
+        playlist_id = self._playlist_id_by_name(name)
 
         resp = httpx.get(
-            self._settings.playlists_info_url.format(target_playlist_id),
+            self._settings.playlists_info_url.format(playlist_id),
             params={'access_token': self._authenticator.token, 'limit': 200},
         )
         resp.raise_for_status()
         target_playlist: PlaylistDetail = PlaylistDetail.parse_obj(resp.json())
+        typer.secho(f'Tracks total: {len(target_playlist.tracks.data)}', fg='green')
         for track in target_playlist.tracks.data:
             typer.secho(str(track), fg='white')

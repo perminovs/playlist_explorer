@@ -1,81 +1,79 @@
-from functools import lru_cache
-from typing import Dict, List, Type, TypeVar
+from __future__ import annotations
 
-import httpx
+from functools import cached_property, lru_cache, wraps
+from typing import TYPE_CHECKING, List
+
+import tekore as tk
 import typer
 
-from organizer.auth.spotify import SpotifyAuthenticator
-from organizer.spotify.entities import BasePaginatedResponse, Playlist, PlaylistDetail, PlaylistsAnswer
-from organizer.spotify.settings import SpotifySettings
-from organizer.utils import pprint_json
+if TYPE_CHECKING:
+    from tekore._model import PlaylistTrack, PrivateUser, SimplePlaylist
 
-AnyPaginatedResponse = TypeVar('AnyPaginatedResponse', bound=BasePaginatedResponse)
+    from organizer.auth.spotify import SpotifyAuthenticator
+    from organizer.spotify.settings import SpotifySettings
+
+
+def _ensure_auth(func):  # type: ignore
+    @wraps(func)
+    def _inner(self: SpotifyClient, *args, **kwargs):  # type: ignore
+        if not self._spotify:
+            self._spotify = tk.Spotify(token=self._authenticator.token)
+        return func(self, *args, **kwargs)
+
+    return _inner
 
 
 class SpotifyClient:
     def __init__(self, settings: SpotifySettings, authenticator: SpotifyAuthenticator):
         self._settings = settings
         self._authenticator = authenticator
+        self._spotify: tk.Spotify = None
 
-    @property
-    def _headers(self) -> Dict[str, str]:
-        return {'Authorization': f'Bearer {self._authenticator.token}'}
-
+    @_ensure_auth
     def user_info(self) -> None:
-        me = httpx.get(self._settings.user_info_url, headers=self._headers)
-        me.raise_for_status()
-        pprint_json(me.json())
+        typer.secho(str(self._current_user), fg='white')
+
+    @cached_property
+    @_ensure_auth
+    def _current_user(self) -> PrivateUser:
+        return self._spotify.current_user()  # type: ignore
 
     @lru_cache()
-    def get_playlist_list(self) -> List[Playlist]:
-        playlist_answers: List[PlaylistsAnswer] = self._fetch_with_pagination(
-            url=self._settings.playlists_url,
-            limit=50,
-            model_cls=PlaylistsAnswer,
-        )
-
-        playlists: List[Playlist] = []
-        for answer in playlist_answers:
-            playlists.extend(answer.items)
-        return playlists
+    @_ensure_auth
+    def get_playlist_list(self) -> List[SimplePlaylist]:
+        return _fetch_paginated(self._spotify.playlists, limit=50, user_id=self._current_user.id)  # type: ignore
 
     @lru_cache()
+    @_ensure_auth
     def _playlist_id_by_name(self, name: str) -> str:
-        playlist_info = self.get_playlist_list()
-
-        for playlist in playlist_info:
-            if playlist.title == name:
+        for playlist in self.get_playlist_list():
+            if playlist.name == name:
                 return playlist.id
 
-        found = ', '.join((f'<{p.title}>' for p in playlist_info))
-        raise ValueError(f'Playlist {name} was not found\n{found}')
+        raise ValueError(f'Playlist "{name}" was not found')
 
-    @lru_cache()
+    @_ensure_auth
     def get_playlist_info(self, name: str) -> None:
         playlist_id = self._playlist_id_by_name(name)
 
-        playlist_responses: List[PlaylistDetail] = self._fetch_with_pagination(
-            url=self._settings.playlists_info_url.format(playlist_id),
-            limit=100,
-            model_cls=PlaylistDetail,
-        )
+        tracks: List[PlaylistTrack]
+        tracks = _fetch_paginated(self._spotify.playlist_items, playlist_id, limit=50)
 
-        for playlist in playlist_responses:
-            for track in playlist.tracks:
-                typer.secho(str(track), fg='white')
+        typer.secho(f'Tracks total: {len(tracks)}', fg='green')
+        for track_info in tracks:
+            artists = '; '.join(a.name for a in track_info.track.artists)
+            album = track_info.track.album.name
+            info = f'{artists} - {track_info.track.name} ({album}) [added: {track_info.added_at}]'
+            typer.secho(info, fg='white')
 
-    def _fetch_with_pagination(
-        self, url: str, limit: int, model_cls: Type[AnyPaginatedResponse]
-    ) -> List[AnyPaginatedResponse]:
-        result: List[AnyPaginatedResponse] = []
-        while True:
-            if not url:
-                break
 
-            resp = httpx.get(url, params={'limit': limit}, headers=self._headers)
-            resp.raise_for_status()
-            basket = model_cls.parse_obj(resp.json())
-            result.append(basket)
-            url = basket.next  # type: ignore
-
-        return result
+def _fetch_paginated(method, *args, limit: int, **kwargs):  # type: ignore
+    offset = 0
+    acc = []
+    while True:
+        page = method(*args, limit=limit, offset=offset, **kwargs)
+        if not page.items:
+            break
+        acc.extend(page.items)
+        offset += limit
+    return acc
