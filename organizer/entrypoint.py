@@ -32,14 +32,14 @@ class TopLevelMenu(str, enum.Enum):
 
 
 class DeezerOptions(str, enum.Enum):
-    AUTH = 'Авторизация'
-    USER_INFO = 'Информация о пользователе'
-    PLAYLIST_INFO = 'Информация о плейлисте'
+    AUTH = 'Authentication'
+    USER_INFO = 'User info'
+    PLAYLIST_INFO = 'Playlist info'
 
 
 class SpotifyOptions(str, enum.Enum):
-    AUTH = 'Авторизация'
-    USER_INFO = 'Информация о пользователе'
+    AUTH = 'Authentication'
+    USER_INFO = 'User info'
 
 
 class LogLevel(str, enum.Enum):

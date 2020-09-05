@@ -31,6 +31,6 @@ class SpotifyAuthenticator(BaseAuthenticator):
             logger.warning('Unknown spotify response\n%s', json_data)
             raise
 
-        token = Token(value=access_token, expire_time=datetime.now() + timedelta(seconds_left))
+        token = Token(value=access_token, expire_time=datetime.now() + timedelta(seconds=seconds_left))
         logger.info('Got token, expires at %s after %s sec', token.expire_time, seconds_left)
         return token
