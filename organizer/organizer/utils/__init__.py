@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from dataclasses import dataclass
-from typing import Any, Callable, Dict, Generic, List, Type, TypeVar, Union
+from typing import Any, Dict, Generic, List, Type, TypeVar
 
 import typer
 from pydantic import ValidationError
@@ -38,12 +37,3 @@ class Stack(Generic[T]):
 
     def is_empty(self) -> bool:
         return not bool(self._stack)
-
-
-MenuAction = Callable[[], Any]
-
-
-@dataclass
-class MenuItem:
-    title: str
-    choices: Dict[str, Union[MenuAction, MenuItem]]

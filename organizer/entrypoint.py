@@ -6,14 +6,9 @@ import typer
 from inquirer.render import ConsoleRender
 from inquirer.themes import GreenPassion, term
 
-from organizer.auth.deezer import DeezerAuthenticator
-from organizer.auth.settings import DeezerAuthSettings, SpotifyAuthSettings
-from organizer.auth.spotify import SpotifyAuthenticator
-from organizer.deezer.client import DeezerClient
-from organizer.deezer.settings import DeezerSettings
-from organizer.spotify.client import SpotifyClient
-from organizer.spotify.settings import SpotifySettings
-from organizer.utils import MenuItem, Stack, create_settings
+from organizer.factory.clients import ClientFactory
+from organizer.factory.menu import MenuItem, build_menu
+from organizer.utils import Stack
 
 app = typer.Typer()
 logger = logging.getLogger(__name__)
@@ -21,25 +16,6 @@ logger = logging.getLogger(__name__)
 theme = GreenPassion()
 theme.List.unselected_color = term.yellow
 render = ConsoleRender(theme=theme)
-
-EXIT = 'EXIT'
-BACK = 'BACK'
-
-
-class TopLevelMenu(str, enum.Enum):
-    DEEZER = 'Deezer'
-    SPOTIFY = 'Spotify'
-
-
-class DeezerOptions(str, enum.Enum):
-    AUTH = 'Authentication'
-    USER_INFO = 'User info'
-    PLAYLIST_INFO = 'Playlist info'
-
-
-class SpotifyOptions(str, enum.Enum):
-    AUTH = 'Authentication'
-    USER_INFO = 'User info'
 
 
 class LogLevel(str, enum.Enum):
@@ -53,54 +29,27 @@ class LogLevel(str, enum.Enum):
 def main(log_level: LogLevel = LogLevel.INFO) -> None:
     logging.basicConfig(level=log_level.value, format='%(asctime)s [%(levelname)s]: %(message)s')
 
-    deezer_auth_settings = create_settings(DeezerAuthSettings, '.env')
-    deezer_auth = DeezerAuthenticator(deezer_auth_settings)
-    deezer_settings = DeezerSettings()
-    deezer_client = DeezerClient(settings=deezer_settings, authenticator=deezer_auth)
-
-    spotify_auth_settings = create_settings(SpotifyAuthSettings, '.env')
-    spotify_auth = SpotifyAuthenticator(spotify_auth_settings)
-    settings = SpotifySettings()
-    spotify_client = SpotifyClient(settings=settings, authenticator=spotify_auth)
-
-    deezer_menu = MenuItem(
-        title='What to do with Deezer?',
-        choices={
-            DeezerOptions.AUTH: lambda: deezer_auth.token,
-            DeezerOptions.USER_INFO: deezer_client.user_info,
-            DeezerOptions.PLAYLIST_INFO: lambda: deezer_playlist_info(deezer_client),
-        },
-    )
-    spotify_menu = MenuItem(
-        title='What to do with Spotify?',
-        choices={
-            SpotifyOptions.AUTH: lambda: spotify_auth.token,
-            SpotifyOptions.USER_INFO: spotify_client.user_info,
-        },
-    )
-    top_level_menu = MenuItem(
-        title='What to do?',
-        choices={
-            TopLevelMenu.DEEZER: deezer_menu,
-            TopLevelMenu.SPOTIFY: spotify_menu,
-        },
-    )
+    client_factory = ClientFactory()
+    top_level_menu = build_menu(client_factory)
 
     run_menu_loop(start_menu=top_level_menu)
 
 
 def run_menu_loop(start_menu: MenuItem) -> None:
+    _exit = 'EXIT'
+    _back = 'BACK'
+
     current_menu = start_menu
     menu_history = Stack[MenuItem]()
     while True:
-        additional_choices = [EXIT] if menu_history.is_empty() else [BACK, EXIT]
+        additional_choices = [_exit] if menu_history.is_empty() else [_back, _exit]
         choices = list(current_menu.choices) + additional_choices  # type: ignore
         option = inquirer.list_input(message=current_menu.title, choices=choices, render=render)
 
-        if not option or option == EXIT:
+        if not option or option == _exit:
             return
 
-        if option == BACK:
+        if option == _back:
             current_menu = menu_history.pop()
             continue
 
@@ -113,12 +62,6 @@ def run_menu_loop(start_menu: MenuItem) -> None:
             chosen()
         else:
             raise RuntimeError('Option not found')
-
-
-def deezer_playlist_info(client: DeezerClient) -> None:
-    playlists = client.get_playlist_list()
-    target = inquirer.list_input('Which one?', choices=[p.title for p in playlists])
-    client.get_playlist_info(target)
 
 
 if __name__ == '__main__':
