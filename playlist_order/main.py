@@ -89,13 +89,14 @@ def main(log_level: LogLevel = LogLevel.INFO) -> None:
     run_menu_loop(start_menu=top_level_menu)
 
 
-def run_menu_loop(start_menu: MenuItem):
+def run_menu_loop(start_menu: MenuItem) -> None:
     current_menu = start_menu
-    menu_history = Stack()
+    menu_history = Stack[MenuItem]()
     while True:
         additional_choices = [EXIT] if menu_history.is_empty() else [BACK, EXIT]
         choices = list(current_menu.choices) + additional_choices  # type: ignore
         option = inquirer.list_input(message=current_menu.title, choices=choices, render=render)
+
         if not option or option == EXIT:
             return
 

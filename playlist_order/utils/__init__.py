@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Type, TypeVar, Union
+from typing import Any, Callable, Dict, Generic, List, Type, TypeVar, Union
 
 import typer
 from pydantic import ValidationError
@@ -26,14 +26,14 @@ def create_settings(settings_cls: Type[T], env_file: str) -> T:
     return settings  # noqa R504
 
 
-class Stack:
+class Stack(Generic[T]):
     def __init__(self) -> None:
-        self._stack: List[Any] = []
+        self._stack: List[T] = []
 
-    def pop(self) -> Any:
+    def pop(self) -> T:
         return self._stack.pop()
 
-    def push(self, value: Any) -> None:
+    def push(self, value: T) -> None:
         self._stack.append(value)
 
     def is_empty(self) -> bool:
