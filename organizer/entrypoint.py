@@ -1,7 +1,7 @@
 import enum
 import logging
 
-import httpcore
+import httpx
 import inquirer
 import typer
 from inquirer.render import ConsoleRender
@@ -62,7 +62,7 @@ def run_menu_loop(start_menu: MenuItem) -> None:
         elif callable(chosen):
             try:
                 chosen()
-            except httpcore.ConnectError:
+            except httpx.ConnectError:
                 logger.exception('Error while request')
         else:
             raise RuntimeError('Option not found')

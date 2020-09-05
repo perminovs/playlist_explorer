@@ -4,13 +4,16 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
+class BasePaginatedResponse(BaseModel):
+    next: Optional[str]
+
+
 class Playlist(BaseModel):
     id: str
     title: str = Field(..., alias='name')
 
 
-class PlaylistsAnswer(BaseModel):
-    next: Optional[str]
+class PlaylistsAnswer(BasePaginatedResponse):
     items: List[Playlist]
 
 
@@ -49,6 +52,5 @@ class TrackInfo(BaseModel):
         return f'{self.track} [added: {self.added_at}]'
 
 
-class PlaylistDetail(BaseModel):
-    next: Optional[str]
+class PlaylistDetail(BasePaginatedResponse):
     tracks: List[TrackInfo] = Field(..., alias='items')

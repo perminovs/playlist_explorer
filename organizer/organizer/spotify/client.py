@@ -1,13 +1,15 @@
 from functools import lru_cache
-from typing import Dict, List, Optional
+from typing import Dict, List, Type, TypeVar
 
 import httpx
 import typer
 
 from organizer.auth.spotify import SpotifyAuthenticator
-from organizer.spotify.entities import Playlist, PlaylistDetail, PlaylistsAnswer, TrackInfo
+from organizer.spotify.entities import BasePaginatedResponse, Playlist, PlaylistDetail, PlaylistsAnswer
 from organizer.spotify.settings import SpotifySettings
 from organizer.utils import pprint_json
+
+AnyPaginatedResponse = TypeVar('AnyPaginatedResponse', bound=BasePaginatedResponse)
 
 
 class SpotifyClient:
@@ -26,17 +28,15 @@ class SpotifyClient:
 
     @lru_cache()
     def get_playlist_list(self) -> List[Playlist]:
-        url: Optional[str] = self._settings.playlists_url
-        playlists: List[Playlist] = []
-        while True:
-            if not url:
-                break
+        playlist_answers: List[PlaylistsAnswer] = self._fetch_with_pagination(
+            url=self._settings.playlists_url,
+            limit=50,
+            model_cls=PlaylistsAnswer,
+        )
 
-            resp = httpx.get(url, params={'limit': 50}, headers=self._headers)
-            resp.raise_for_status()
-            answer = PlaylistsAnswer.parse_obj(resp.json())
+        playlists: List[Playlist] = []
+        for answer in playlist_answers:
             playlists.extend(answer.items)
-            url = answer.next
         return playlists
 
     @lru_cache()
@@ -54,17 +54,28 @@ class SpotifyClient:
     def get_playlist_info(self, name: str) -> None:
         playlist_id = self._playlist_id_by_name(name)
 
-        url: Optional[str] = self._settings.playlists_info_url.format(playlist_id)
-        tracks: List[TrackInfo] = []
+        playlist_responses: List[PlaylistDetail] = self._fetch_with_pagination(
+            url=self._settings.playlists_info_url.format(playlist_id),
+            limit=100,
+            model_cls=PlaylistDetail,
+        )
+
+        for playlist in playlist_responses:
+            for track in playlist.tracks:
+                typer.secho(str(track), fg='white')
+
+    def _fetch_with_pagination(
+        self, url: str, limit: int, model_cls: Type[AnyPaginatedResponse]
+    ) -> List[AnyPaginatedResponse]:
+        result: List[AnyPaginatedResponse] = []
         while True:
             if not url:
                 break
 
-            resp = httpx.get(url, params={'limit': 100}, headers=self._headers)
+            resp = httpx.get(url, params={'limit': limit}, headers=self._headers)
             resp.raise_for_status()
-            target_playlist: PlaylistDetail = PlaylistDetail.parse_obj(resp.json())
-            tracks.extend(target_playlist.tracks)
-            url = target_playlist.next
+            basket = model_cls.parse_obj(resp.json())
+            result.append(basket)
+            url = basket.next  # type: ignore
 
-        for track in tracks:
-            typer.secho(str(track), fg='white')
+        return result
