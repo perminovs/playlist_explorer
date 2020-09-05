@@ -47,7 +47,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
         choices={
             DeezerOptions.AUTH: lambda: auth_func(client_factory.deezer_auth.token),
             DeezerOptions.USER_INFO: client_factory.deezer_client.user_info,
-            DeezerOptions.PLAYLIST_INFO: lambda: deezer_playlist_tracks(client_factory.deezer_client),
+            DeezerOptions.PLAYLIST_INFO: lambda: _playlist_tracks(client_factory.deezer_client),
         },
     )
     spotify_menu = MenuItem(
@@ -55,7 +55,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
         choices={
             SpotifyOptions.AUTH: lambda: auth_func(client_factory.spotify_auth.token),
             SpotifyOptions.USER_INFO: client_factory.spotify_client.user_info,
-            SpotifyOptions.PLAYLIST_INFO: lambda: spotify_playlist_tracks(client_factory.spotify_client),
+            SpotifyOptions.PLAYLIST_INFO: lambda: _playlist_tracks(client_factory.spotify_client),
         },
     )
     return MenuItem(
@@ -67,13 +67,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
     )
 
 
-def deezer_playlist_tracks(client: DeezerClient) -> None:
-    playlists = client.get_playlist_list()
-    target = inquirer.list_input('Which one?', choices=[p.title for p in playlists])
-    client.get_playlist_info(target)
-
-
-def spotify_playlist_tracks(client: SpotifyClient) -> None:
-    playlists = client.get_playlist_list()
-    target = inquirer.list_input('Which one?', choices=[p.name for p in playlists])
-    client.get_playlist_info(target)
+def _playlist_tracks(client: Union[DeezerClient, SpotifyClient]) -> None:
+    playlists = client.get_playlist_names()
+    target = inquirer.list_input('Which one?', choices=playlists)
+    client.show_playlist_info(target)

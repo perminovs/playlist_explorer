@@ -37,6 +37,9 @@ class DeezerClient:
         playlist_info: PlaylistsResponse = PlaylistsResponse.parse_obj(resp.json())
         return playlist_info.data
 
+    def get_playlist_names(self) -> List[str]:
+        return [p.title for p in self.get_playlist_list()]
+
     @lru_cache()
     def _playlist_id_by_name(self, name: str) -> str:
         for playlist in self.get_playlist_list():
@@ -45,7 +48,7 @@ class DeezerClient:
 
         raise ValueError(f'Playlist "{name}" was not found')
 
-    def get_playlist_info(self, name: str) -> None:
+    def show_playlist_info(self, name: str) -> None:
         playlist_id = self._playlist_id_by_name(name)
 
         resp = httpx.get(

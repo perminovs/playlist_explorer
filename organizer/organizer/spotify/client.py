@@ -38,12 +38,13 @@ class SpotifyClient:
     def _current_user(self) -> PrivateUser:
         return self._spotify.current_user()  # type: ignore
 
-    @lru_cache()
     @_ensure_auth
     def get_playlist_list(self) -> List[SimplePlaylist]:
         return _fetch_paginated(self._spotify.playlists, limit=50, user_id=self._current_user.id)  # type: ignore
 
-    @lru_cache()
+    def get_playlist_names(self) -> List[str]:
+        return [p.name for p in self.get_playlist_list()]
+
     @_ensure_auth
     def _playlist_id_by_name(self, name: str) -> str:
         for playlist in self.get_playlist_list():
@@ -53,7 +54,7 @@ class SpotifyClient:
         raise ValueError(f'Playlist "{name}" was not found')
 
     @_ensure_auth
-    def get_playlist_info(self, name: str) -> None:
+    def show_playlist_info(self, name: str) -> None:
         playlist_id = self._playlist_id_by_name(name)
 
         tracks: List[PlaylistTrack]
@@ -67,6 +68,7 @@ class SpotifyClient:
             typer.secho(info, fg='white')
 
 
+@lru_cache()
 def _fetch_paginated(method, *args, limit: int, **kwargs):  # type: ignore
     offset = 0
     acc = []
