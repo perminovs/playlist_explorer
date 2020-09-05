@@ -4,10 +4,10 @@ from typing import List
 import httpx
 import typer
 
-from playlist_order.auth.deezer import DeezerAuthenticator
-from playlist_order.deezer.entities import Playlist, PlaylistDetail, PlaylistsResponse
-from playlist_order.deezer.settings import DeezerSettings
-from playlist_order.utils import pprint_json
+from organizer.auth.deezer import DeezerAuthenticator
+from organizer.deezer.entities import Playlist, PlaylistDetail, PlaylistsResponse
+from organizer.deezer.settings import DeezerSettings
+from organizer.utils import pprint_json
 
 
 class DeezerClient:

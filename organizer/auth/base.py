@@ -12,7 +12,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from playlist_order.auth.settings import BaseAuthSettings
+from organizer.auth.settings import BaseAuthSettings
 
 logger = logging.getLogger(__name__)
 _TOKEN_DIR = pathlib.Path(__file__).parent

@@ -1,8 +1,8 @@
 import httpx
 
-from playlist_order.auth.spotify import SpotifyAuthenticator
-from playlist_order.spotify.settings import SpotifySettings
-from playlist_order.utils import pprint_json
+from organizer.auth.spotify import SpotifyAuthenticator
+from organizer.spotify.settings import SpotifySettings
+from organizer.utils import pprint_json
 
 
 class SpotifyClient:

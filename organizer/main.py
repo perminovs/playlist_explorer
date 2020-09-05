@@ -6,14 +6,14 @@ import typer
 from inquirer.render import ConsoleRender
 from inquirer.themes import GreenPassion, term
 
-from playlist_order.auth.deezer import DeezerAuthenticator
-from playlist_order.auth.settings import DeezerAuthSettings, SpotifyAuthSettings
-from playlist_order.auth.spotify import SpotifyAuthenticator
-from playlist_order.deezer.client import DeezerClient
-from playlist_order.deezer.settings import DeezerSettings
-from playlist_order.spotify.client import SpotifyClient
-from playlist_order.spotify.settings import SpotifySettings
-from playlist_order.utils import MenuItem, Stack, create_settings
+from organizer.auth.deezer import DeezerAuthenticator
+from organizer.auth.settings import DeezerAuthSettings, SpotifyAuthSettings
+from organizer.auth.spotify import SpotifyAuthenticator
+from organizer.deezer.client import DeezerClient
+from organizer.deezer.settings import DeezerSettings
+from organizer.spotify.client import SpotifyClient
+from organizer.spotify.settings import SpotifySettings
+from organizer.utils import MenuItem, Stack, create_settings
 
 app = typer.Typer()
 logger = logging.getLogger(__name__)

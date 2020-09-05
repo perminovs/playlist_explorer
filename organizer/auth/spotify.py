@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 import httpx
 
-from playlist_order.auth.base import BaseAuthenticator, Token
+from organizer.auth.base import BaseAuthenticator, Token
 
 logger = logging.getLogger(__name__)
 
