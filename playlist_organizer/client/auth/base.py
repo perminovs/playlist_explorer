@@ -60,10 +60,9 @@ class BaseAuthenticator(abc.ABC):
         token = Token.load(self._token_path)
         if token:
             self._token = token
-
-        if self._is_token_valid:
-            logger.debug('Dumped token found')
-            return self._token.value  # type: ignore
+            if self._is_token_valid:
+                logger.debug('Dumped token found')
+                return self._token.value  # type: ignore
 
         logger.debug('No valid token in file found, get new one')
 
