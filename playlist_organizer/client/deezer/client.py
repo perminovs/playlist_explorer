@@ -3,11 +3,11 @@ from typing import Any, Dict, List, Type, TypeVar, cast
 
 import httpx
 
-from organizer.client.auth.deezer import DeezerAuthenticator
-from organizer.client.base import IPlatformClient, Track
-from organizer.client.deezer.entities import PaginatedResponse, Playlist, PlaylistsResponse, PlaylistTracks
-from organizer.client.deezer.settings import DeezerSettings
-from organizer.utils import pprint_json
+from playlist_organizer.client.auth.deezer import DeezerAuthenticator
+from playlist_organizer.client.base import IPlatformClient, Track
+from playlist_organizer.client.deezer.entities import PaginatedResponse, Playlist, PlaylistsResponse, PlaylistTracks
+from playlist_organizer.client.deezer.settings import DeezerSettings
+from playlist_organizer.utils import pprint_json
 
 PaginatedResponseType = TypeVar('PaginatedResponseType', bound=PaginatedResponse)
 

@@ -3,7 +3,7 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 
-from organizer.client.auth.base import BaseAuthenticator
+from playlist_organizer.client.auth.base import BaseAuthenticator
 
 
 def get_qs(url):

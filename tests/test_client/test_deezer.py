@@ -2,11 +2,11 @@ from uuid import uuid4
 
 import pytest
 from pytest_httpx import HTTPXMock
-from tests.test_client.conftest import get_qs
 
-from organizer.client.deezer.client import DeezerClient
-from organizer.client.deezer.entities import Playlist
-from organizer.client.deezer.settings import DeezerSettings
+from playlist_organizer.client.deezer.client import DeezerClient
+from playlist_organizer.client.deezer.entities import Playlist
+from playlist_organizer.client.deezer.settings import DeezerSettings
+from tests.test_client.conftest import get_qs
 
 
 @pytest.fixture()

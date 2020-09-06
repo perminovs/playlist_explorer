@@ -13,8 +13,8 @@ from typing import Optional
 import typer
 from pydantic import BaseModel
 
-from organizer.client.auth.settings import BaseAuthSettings
-from organizer.utils import DateTimeEncoder
+from playlist_organizer.client.auth.settings import BaseAuthSettings
+from playlist_organizer.utils import DateTimeEncoder
 
 logger = logging.getLogger(__name__)
 _TOKEN_DIR = pathlib.Path(__file__).parent

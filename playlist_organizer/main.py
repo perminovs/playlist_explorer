@@ -6,9 +6,9 @@ import typer
 from inquirer.render import ConsoleRender
 from inquirer.themes import GreenPassion, term
 
-from organizer.factory.clients import ClientFactory
-from organizer.factory.menu import MenuItem, build_menu
-from organizer.utils import Stack
+from playlist_organizer.factory.clients import ClientFactory
+from playlist_organizer.factory.menu import MenuItem, build_menu
+from playlist_organizer.utils import Stack
 
 app = typer.Typer()
 logger = logging.getLogger(__name__)
@@ -62,10 +62,6 @@ def run_menu_loop(start_menu: MenuItem) -> None:
             try:
                 chosen()
             except Exception:
-                logger.exception('Error while request')
+                logger.exception('Something went wrong, try again')
         else:
             raise RuntimeError('Option not found')
-
-
-if __name__ == '__main__':
-    app()

@@ -10,7 +10,7 @@ from pydantic import BaseModel
 if TYPE_CHECKING:
     from tekore._model import PlaylistTrack as SpotifyTrack
 
-    from organizer.client.deezer.entities import Track as DeezerTrack
+    from playlist_organizer.client.deezer.entities import Track as DeezerTrack
 
 PlaylistType = TypeVar('PlaylistType')
 

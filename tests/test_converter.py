@@ -3,9 +3,9 @@ from datetime import datetime
 
 from tekore._model import PlaylistTrack as SpotifyTrack
 
-from organizer.client.base import Platform, Track
-from organizer.client.deezer.entities import Album, Artist
-from organizer.client.deezer.entities import Track as DeezerTrack
+from playlist_organizer.client.base import Platform, Track
+from playlist_organizer.client.deezer.entities import Album, Artist
+from playlist_organizer.client.deezer.entities import Track as DeezerTrack
 
 
 def test_track_convert_from_deezer():

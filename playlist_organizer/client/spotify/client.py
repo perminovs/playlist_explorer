@@ -7,13 +7,13 @@ import tekore as tk
 import typer
 from tekore._model import SimplePlaylist
 
-from organizer.client.base import IPlatformClient, Track
+from playlist_organizer.client.base import IPlatformClient, Track
 
 if TYPE_CHECKING:
     from tekore._model import PlaylistTrack, PrivateUser
 
-    from organizer.client.auth.spotify import SpotifyAuthenticator
-    from organizer.client.spotify.settings import SpotifySettings
+    from playlist_organizer.client.auth.spotify import SpotifyAuthenticator
+    from playlist_organizer.client.spotify.settings import SpotifySettings
 
 
 def _ensure_auth(func):  # type: ignore

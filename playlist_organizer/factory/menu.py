@@ -7,8 +7,8 @@ from typing import Any, Callable, Dict, Union
 import inquirer
 import typer
 
-from organizer.client.base import IPlatformClient
-from organizer.factory.clients import ClientFactory
+from playlist_organizer.client.base import IPlatformClient
+from playlist_organizer.factory.clients import ClientFactory
 
 MenuAction = Callable[[], None]
 
