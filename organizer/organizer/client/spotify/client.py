@@ -9,8 +9,8 @@ import typer
 if TYPE_CHECKING:
     from tekore._model import PlaylistTrack, PrivateUser, SimplePlaylist
 
-    from organizer.auth.spotify import SpotifyAuthenticator
-    from organizer.spotify.settings import SpotifySettings
+    from organizer.client.auth.spotify import SpotifyAuthenticator
+    from organizer.client.spotify.settings import SpotifySettings
 
 
 def _ensure_auth(func):  # type: ignore

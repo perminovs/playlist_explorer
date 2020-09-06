@@ -7,7 +7,7 @@ from typing import Tuple
 import httpx
 from httpx import Response
 
-from organizer.auth.base import BaseAuthenticator, Token
+from organizer.client.auth.base import BaseAuthenticator, Token
 
 logger = logging.getLogger(__name__)
 

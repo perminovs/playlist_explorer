@@ -7,9 +7,9 @@ from typing import Callable, Dict, Union
 import inquirer
 import typer
 
-from organizer.deezer.client import DeezerClient
+from organizer.client.deezer.client import DeezerClient
+from organizer.client.spotify.client import SpotifyClient
 from organizer.factory.clients import ClientFactory
-from organizer.spotify.client import SpotifyClient
 
 MenuAction = Callable[[], None]
 

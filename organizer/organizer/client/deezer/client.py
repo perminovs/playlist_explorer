@@ -4,9 +4,9 @@ from typing import Any, Dict, List
 import httpx
 import typer
 
-from organizer.auth.deezer import DeezerAuthenticator
-from organizer.deezer.entities import Playlist, PlaylistDetail, PlaylistsResponse
-from organizer.deezer.settings import DeezerSettings
+from organizer.client.auth.deezer import DeezerAuthenticator
+from organizer.client.deezer.entities import Playlist, PlaylistDetail, PlaylistsResponse
+from organizer.client.deezer.settings import DeezerSettings
 from organizer.utils import pprint_json
 
 

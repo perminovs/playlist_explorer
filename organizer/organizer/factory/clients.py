@@ -1,12 +1,12 @@
 from functools import cached_property
 
-from organizer.auth.deezer import DeezerAuthenticator
-from organizer.auth.settings import DeezerAuthSettings, SpotifyAuthSettings
-from organizer.auth.spotify import SpotifyAuthenticator
-from organizer.deezer.client import DeezerClient
-from organizer.deezer.settings import DeezerSettings
-from organizer.spotify.client import SpotifyClient
-from organizer.spotify.settings import SpotifySettings
+from organizer.client.auth.deezer import DeezerAuthenticator
+from organizer.client.auth.settings import DeezerAuthSettings, SpotifyAuthSettings
+from organizer.client.auth.spotify import SpotifyAuthenticator
+from organizer.client.deezer.client import DeezerClient
+from organizer.client.deezer.settings import DeezerSettings
+from organizer.client.spotify.client import SpotifyClient
+from organizer.client.spotify.settings import SpotifySettings
 from organizer.utils import create_settings
 
 
