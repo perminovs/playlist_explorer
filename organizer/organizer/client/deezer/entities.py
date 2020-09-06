@@ -1,7 +1,14 @@
 from datetime import datetime
-from typing import List
+from typing import TYPE_CHECKING, Any, List, Optional
 
 from pydantic import BaseModel
+
+
+class PaginatedResponse(BaseModel):
+    next: Optional[str] = None
+
+    if TYPE_CHECKING:
+        data: List[Any]
 
 
 class Playlist(BaseModel):
@@ -9,7 +16,7 @@ class Playlist(BaseModel):
     title: str
 
 
-class PlaylistsResponse(BaseModel):
+class PlaylistsResponse(PaginatedResponse):
     data: List[Playlist]
 
 
@@ -40,9 +47,5 @@ class Track(BaseModel):
         return f'{self.artist} - {self.title} ({self.album}) [added: {datetime.fromtimestamp(self.time_add)}]'
 
 
-class TrackList(BaseModel):
+class PlaylistTracks(PaginatedResponse):
     data: List[Track]
-
-
-class PlaylistDetail(BaseModel):
-    tracks: TrackList
