@@ -14,6 +14,7 @@ import typer
 from pydantic import BaseModel
 
 from organizer.client.auth.settings import BaseAuthSettings
+from organizer.utils import DateTimeEncoder
 
 logger = logging.getLogger(__name__)
 _TOKEN_DIR = pathlib.Path(__file__).parent
@@ -29,17 +30,19 @@ class Token(BaseModel):
 
     def dump(self, path: pathlib.Path) -> None:
         with path.open('w') as f:
-            json.dump(self.json(), f, ensure_ascii=False, indent=4, sort_keys=True)
+            json.dump(self.dict(), f, cls=DateTimeEncoder, ensure_ascii=False, indent=4, sort_keys=True)
 
     @classmethod
     def load(cls, path: pathlib.Path) -> Optional[Token]:
         if not path.exists():
             return None
+
         with path.open() as f:
             try:
-                return cls(**json.loads(json.load(f)))
-            except JSONDecodeError:
-                return None
+                return cls(**json.load(f))
+            except (JSONDecodeError, TypeError, ValueError):
+                path.unlink()
+        return None
 
 
 class BaseAuthenticator(abc.ABC):

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import datetime
 import json
 import logging
-from typing import Any, Dict, Generic, List, Type, TypeVar
+from json import JSONEncoder
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
 import typer
 from pydantic import ValidationError
@@ -37,3 +39,10 @@ class Stack(Generic[T]):
 
     def is_empty(self) -> bool:
         return not bool(self._stack)
+
+
+class DateTimeEncoder(JSONEncoder):
+    def default(self, obj: Any) -> Optional[str]:
+        if isinstance(obj, (datetime.date, datetime.datetime)):
+            return obj.isoformat()
+        return None
