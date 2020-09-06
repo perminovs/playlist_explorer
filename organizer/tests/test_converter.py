@@ -1,5 +1,4 @@
 import json
-import pathlib
 from datetime import datetime
 
 from tekore._model import PlaylistTrack as SpotifyTrack
@@ -7,8 +6,6 @@ from tekore._model import PlaylistTrack as SpotifyTrack
 from organizer.client.base import Platform, Track
 from organizer.client.deezer.entities import Album, Artist
 from organizer.client.deezer.entities import Track as DeezerTrack
-
-RAW_RESPONSES_DIR = pathlib.Path(__file__).parent / 'raw_responses'
 
 
 def test_track_convert_from_deezer():
@@ -29,8 +26,8 @@ def test_track_convert_from_deezer():
     assert track.source == Platform.DEEZER
 
 
-def test_track_convert_from_spotify():
-    with (RAW_RESPONSES_DIR / 'spotify_track.json').open() as f:
+def test_track_convert_from_spotify(raw_data_dir):
+    with (raw_data_dir / 'spotify_track.json').open() as f:
         spotify_track = SpotifyTrack(**json.load(f))
 
     track = Track.from_spotify(spotify_track)

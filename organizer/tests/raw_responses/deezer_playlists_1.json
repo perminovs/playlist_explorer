@@ -1,0 +1,63 @@
+{
+  "data": [
+    {
+      "id": "111",
+      "title": "playlist1",
+      "duration": 128373,
+      "public": false,
+      "is_loved_track": true,
+      "collaborative": false,
+      "nb_tracks": 561,
+      "fans": 0,
+      "link": "https://www.deezer.com/playlist/111",
+      "picture": "https://api.deezer.com/playlist/111/image",
+      "picture_small": "https://cdns-images.dzcdn.net/images/cover/kek1/56x56-000000-80-0-0.jpg",
+      "picture_medium": "https://cdns-images.dzcdn.net/images/cover/kek1/250x250-000000-80-0-0.jpg",
+      "picture_big": "https://cdns-images.dzcdn.net/images/cover/kek1/500x500-000000-80-0-0.jpg",
+      "picture_xl": "https://cdns-images.dzcdn.net/images/cover/kek1/1000x1000-000000-80-0-0.jpg",
+      "checksum": "ewret",
+      "tracklist": "https://api.deezer.com/playlist/111/tracks",
+      "creation_date": "2017-07-10 11:49:35",
+      "time_add": 1579389676,
+      "time_mod": 1595885998,
+      "creator": {
+        "id": "222",
+        "name": "kek",
+        "tracklist": "https://api.deezer.com/user/222/flow",
+        "type": "user"
+      },
+      "type": "playlist"
+    },
+    {
+      "id": "222",
+      "title": "playlist2",
+      "duration": 4350,
+      "public": false,
+      "is_loved_track": false,
+      "collaborative": false,
+      "nb_tracks": 24,
+      "fans": 0,
+      "link": "https://www.deezer.com/playlist/222",
+      "picture": "https://api.deezer.com/playlist/222/image",
+      "picture_small": "https://cdns-images.dzcdn.net/images/cover/kek2-e40bdf856de75cde1fc47cf14d1f3bc0-4623dfbb6dd56c781a0e81a39b0f5c5c-b2a2e9eb7744d24dbce89c61cb00d03c/56x56-000000-80-0-0.jpg",
+      "picture_medium": "https://cdns-images.dzcdn.net/images/cover/kek2-e40bdf856de75cde1fc47cf14d1f3bc0-4623dfbb6dd56c781a0e81a39b0f5c5c-b2a2e9eb7744d24dbce89c61cb00d03c/250x250-000000-80-0-0.jpg",
+      "picture_big": "https://cdns-images.dzcdn.net/images/cover/kek2-e40bdf856de75cde1fc47cf14d1f3bc0-4623dfbb6dd56c781a0e81a39b0f5c5c-b2a2e9eb7744d24dbce89c61cb00d03c/500x500-000000-80-0-0.jpg",
+      "picture_xl": "https://cdns-images.dzcdn.net/images/cover/kek2-e40bdf856de75cde1fc47cf14d1f3bc0-4623dfbb6dd56c781a0e81a39b0f5c5c-b2a2e9eb7744d24dbce89c61cb00d03c/1000x1000-000000-80-0-0.jpg",
+      "checksum": "134ret",
+      "tracklist": "https://api.deezer.com/playlist/222/tracks",
+      "creation_date": "2019-01-07 15:33:10",
+      "time_add": 1576358133,
+      "time_mod": 1591570354,
+      "creator": {
+        "id": "222",
+        "name": "kek",
+        "tracklist": "https://api.deezer.com/user/222/flow",
+        "type": "user"
+      },
+      "type": "playlist"
+    }
+  ],
+  "checksum": "345eytrhfcgchgsezed",
+  "total": 4,
+  "next": "https://dummy/user/me/playlists?index=2"
+}

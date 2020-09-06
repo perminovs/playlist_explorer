@@ -5,7 +5,7 @@ class DeezerSettings(BaseSettings):
     api_host: str = 'https://api.deezer.com'
 
     user_info_path: str = 'user/me'
-    playlists_path: str = 'playlists'
+    playlists_path: str = 'user/me/playlists'
     playlist_tracks_path: str = 'playlist/{}/tracks'
 
     @property
@@ -14,7 +14,7 @@ class DeezerSettings(BaseSettings):
 
     @property
     def playlists_url(self) -> str:
-        return f'{self.user_info_url}/{self.playlists_path}'
+        return f'{self.api_host}/{self.playlists_path}'
 
     @property
     def playlists_tracks_url(self) -> str:
