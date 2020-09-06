@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Dict, Union
 
 import inquirer
+import typer
 
 from organizer.client.base import IPlatformClient
 from organizer.factory.clients import ClientFactory
@@ -68,4 +69,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
 def _playlist_tracks(client: IPlatformClient[Any]) -> None:
     playlists = client.get_playlist_names()
     target = inquirer.list_input('Which one?', choices=playlists)
-    client.show_playlist_info(target)
+    tracks = client.get_playlist_tracks(target)
+    typer.secho(f'Tracks total: {len(tracks)}', fg='green')
+    for t in tracks:
+        typer.secho(str(t), fg='white')

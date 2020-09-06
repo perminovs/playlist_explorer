@@ -11,3 +11,6 @@ pretty:
 	$(BIN)black --target-version py38 --skip-string-normalization --line-length=119 $(CODE)
 
 plint: pretty lint
+
+tests:
+	$(BIN)pytest $(CODE)/tests -v

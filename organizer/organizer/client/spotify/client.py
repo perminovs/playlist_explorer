@@ -7,7 +7,7 @@ import tekore as tk
 import typer
 from tekore._model import SimplePlaylist
 
-from organizer.client.base import IPlatformClient
+from organizer.client.base import IPlatformClient, Track
 
 if TYPE_CHECKING:
     from tekore._model import PlaylistTrack, PrivateUser
@@ -57,18 +57,12 @@ class SpotifyClient(IPlatformClient[SimplePlaylist]):
         raise ValueError(f'Playlist "{name}" was not found')
 
     @_ensure_auth
-    def show_playlist_info(self, name: str) -> None:
+    def get_playlist_tracks(self, name: str) -> List[Track]:
         playlist_id = self._playlist_id_by_name(name)
 
         tracks: List[PlaylistTrack]
         tracks = _fetch_paginated(self._spotify.playlist_items, playlist_id, limit=50)
-
-        typer.secho(f'Tracks total: {len(tracks)}', fg='green')
-        for track_info in tracks:
-            artists = '; '.join(a.name for a in track_info.track.artists)
-            album = track_info.track.album.name
-            info = f'{artists} - {track_info.track.name} ({album}) [added: {track_info.added_at}]'
-            typer.secho(info, fg='white')
+        return [Track.from_spotify(t) for t in tracks]
 
 
 @lru_cache()

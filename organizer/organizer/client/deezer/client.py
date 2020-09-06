@@ -2,10 +2,9 @@ from functools import cached_property, lru_cache
 from typing import Any, Dict, List, Type, TypeVar, cast
 
 import httpx
-import typer
 
 from organizer.client.auth.deezer import DeezerAuthenticator
-from organizer.client.base import IPlatformClient
+from organizer.client.base import IPlatformClient, Track
 from organizer.client.deezer.entities import PaginatedResponse, Playlist, PlaylistsResponse, PlaylistTracks
 from organizer.client.deezer.settings import DeezerSettings
 from organizer.utils import pprint_json
@@ -44,7 +43,7 @@ class DeezerClient(IPlatformClient[Playlist]):
 
         raise ValueError(f'Playlist "{name}" was not found')
 
-    def show_playlist_info(self, name: str) -> None:
+    def get_playlist_tracks(self, name: str) -> List[Track]:
         playlist_id = self._playlist_id_by_name(name)
 
         tracks = self._fetch_paginated(
@@ -52,10 +51,7 @@ class DeezerClient(IPlatformClient[Playlist]):
             limit=200,
             model_cls=PlaylistTracks,
         )
-
-        typer.secho(f'Tracks total: {len(tracks)}', fg='green')
-        for track in tracks:
-            typer.secho(str(track), fg='white')
+        return [Track.from_deezer(t) for t in tracks]
 
     @lru_cache()
     def _fetch_paginated(self, url: str, limit: int, model_cls: Type[PaginatedResponseType]) -> List[Any]:
