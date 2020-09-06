@@ -60,7 +60,7 @@ def test_get_playlist_tracks(client, responses: HTTPXMock, mocker, json_response
     playlist_name = str(uuid4())
 
     client._playlist_id_by_name = mocker.MagicMock()
-    client._playlist_id_by_name.return_result = playlist_id
+    client._playlist_id_by_name.return_value = playlist_id
 
     tracks = client.get_playlist_tracks(playlist_name)
 
@@ -69,6 +69,8 @@ def test_get_playlist_tracks(client, responses: HTTPXMock, mocker, json_response
     assert len(tracks) == 4
     expected_titles = {'Highway Star', 'Pictures Of Home (Remastered 2012)', 'Burn (Remastered 2004)', 'Lazy'}
     assert {t.title for t in tracks} == expected_titles
+
+    assert all(playlist_id in str(r.url) for r in responses.get_requests())
 
     expected_qs = get_qs(json_responses[0]['next'])
     actual_qs = get_qs(str(responses.get_requests()[1].url))

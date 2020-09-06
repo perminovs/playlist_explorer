@@ -1,0 +1,102 @@
+{
+  "href": "https://dummy/v1/users/user_id/playlists?offset=0&limit=2",
+  "items": [
+    {
+      "collaborative": false,
+      "description": "",
+      "external_urls": {
+        "spotify": "https://open.spotify.com/playlist/user_id"
+      },
+      "href": "https://api.spotify.com/v1/playlists/user_id",
+      "id": "playlist1_id",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://mosaic.scdn.co/640/kek",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://mosaic.scdn.co/300/kek",
+          "width": 300
+        },
+        {
+          "height": 60,
+          "url": "https://mosaic.scdn.co/60/kek",
+          "width": 60
+        }
+      ],
+      "name": "playlist1",
+      "owner": {
+        "display_name": "bonjur",
+        "external_urls": {
+          "spotify": "https://open.spotify.com/user/user_id"
+        },
+        "href": "https://api.spotify.com/v1/users/user_id",
+        "id": "user_id",
+        "type": "user",
+        "uri": "spotify:user:user_id"
+      },
+      "primary_color": null,
+      "public": false,
+      "snapshot_id": "MTg5LDUzM2Q0ODdlOGYzZjE2YTg4ODk1ZmMzN2Q5MDFjNjJlMmRhYjYzMmE=",
+      "tracks": {
+        "href": "https://api.spotify.com/v1/playlists/user_id/tracks",
+        "total": 37
+      },
+      "type": "playlist",
+      "uri": "spotify:playlist:user_id"
+    },
+    {
+      "collaborative": false,
+      "description": "",
+      "external_urls": {
+        "spotify": "https://open.spotify.com/playlist/kek1"
+      },
+      "href": "https://api.spotify.com/v1/playlists/kek1",
+      "id": "kek1",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://mosaic.scdn.co/640/ab67616d0000b273667d0224b446ce8e4f7d9b37ab67616d0000b2737c6d7cb84a3512db0bb3642eab67616d0000b273ac0c10b76fe3eaf48cc5a6c8ab67616d0000b273ebeeea11edb14e6edea63b2e",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://mosaic.scdn.co/300/ab67616d0000b273667d0224b446ce8e4f7d9b37ab67616d0000b2737c6d7cb84a3512db0bb3642eab67616d0000b273ac0c10b76fe3eaf48cc5a6c8ab67616d0000b273ebeeea11edb14e6edea63b2e",
+          "width": 300
+        },
+        {
+          "height": 60,
+          "url": "https://mosaic.scdn.co/60/ab67616d0000b273667d0224b446ce8e4f7d9b37ab67616d0000b2737c6d7cb84a3512db0bb3642eab67616d0000b273ac0c10b76fe3eaf48cc5a6c8ab67616d0000b273ebeeea11edb14e6edea63b2e",
+          "width": 60
+        }
+      ],
+      "name": "playlist2",
+      "owner": {
+        "display_name": "bonjur",
+        "external_urls": {
+          "spotify": "https://open.spotify.com/user/user_id"
+        },
+        "href": "https://api.spotify.com/v1/users/user_id",
+        "id": "user_id",
+        "type": "user",
+        "uri": "spotify:user:user_id"
+      },
+      "primary_color": null,
+      "public": false,
+      "snapshot_id": "MTEsMmEwZDhlYzZjNTdiZTBhYzgxNmMxMDUzOWE2YzBhYmViMTI3MjliYg==",
+      "tracks": {
+        "href": "https://api.spotify.com/v1/playlists/kek1/tracks",
+        "total": 51
+      },
+      "type": "playlist",
+      "uri": "spotify:playlist:kek1"
+    }
+  ],
+  "limit": 2,
+  "next": "https://dummy/v1/users/user_id/playlists?offset=2&limit=2",
+  "offset": 0,
+  "previous": null,
+  "total": 4
+}

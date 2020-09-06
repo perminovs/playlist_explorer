@@ -71,8 +71,8 @@ def _fetch_paginated(method, *args, limit: int, **kwargs):  # type: ignore
     acc = []
     while True:
         page = method(*args, limit=limit, offset=offset, **kwargs)
-        if not page.items:
-            break
         acc.extend(page.items)
         offset += limit
+        if not page.next:
+            break
     return acc

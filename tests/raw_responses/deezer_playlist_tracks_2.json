@@ -80,5 +80,6 @@
     }
   ],
   "checksum": "67efd97dc899921972815c925117074e",
+  "prev": "https://dummy/user/me/playlists?limit=1&index=0",
   "total": 4
 }
