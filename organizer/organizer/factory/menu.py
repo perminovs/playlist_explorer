@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import enum
 from dataclasses import dataclass
-from typing import Callable, Dict, Union
+from typing import Any, Callable, Dict, Union
 
 import inquirer
-import typer
 
 from organizer.client.deezer.client import DeezerClient
 from organizer.client.spotify.client import SpotifyClient
@@ -20,8 +19,8 @@ class MenuItem:
     choices: Dict[str, Union[MenuAction, MenuItem]]
 
 
-def auth_func(token_attr: str) -> None:
-    typer.secho('Auth success', fg='white')
+def _(*args: Any, **kwargs: Any) -> None:
+    pass
 
 
 class TopLevelMenu(str, enum.Enum):
@@ -45,7 +44,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
     deezer_menu = MenuItem(
         title='What to do with Deezer?',
         choices={
-            DeezerOptions.AUTH: lambda: auth_func(client_factory.deezer_auth.token),
+            DeezerOptions.AUTH: lambda: _(client_factory.deezer_auth.token),
             DeezerOptions.USER_INFO: client_factory.deezer_client.user_info,
             DeezerOptions.PLAYLIST_INFO: lambda: _playlist_tracks(client_factory.deezer_client),
         },
@@ -53,7 +52,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
     spotify_menu = MenuItem(
         title='What to do with Spotify?',
         choices={
-            SpotifyOptions.AUTH: lambda: auth_func(client_factory.spotify_auth.token),
+            SpotifyOptions.AUTH: lambda: _(client_factory.spotify_auth.token),
             SpotifyOptions.USER_INFO: client_factory.spotify_client.user_info,
             SpotifyOptions.PLAYLIST_INFO: lambda: _playlist_tracks(client_factory.spotify_client),
         },

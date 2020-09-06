@@ -10,6 +10,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from json import JSONDecodeError
 from typing import Optional
 
+import typer
 from pydantic import BaseModel
 
 from organizer.client.auth.settings import BaseAuthSettings
@@ -66,6 +67,7 @@ class BaseAuthenticator(abc.ABC):
         self._token = self._get_token()
 
         self._token.dump(self._token_path)
+        typer.secho('Auth success', fg='green')
         return self._token.value
 
     @abc.abstractmethod
