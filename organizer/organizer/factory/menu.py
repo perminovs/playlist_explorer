@@ -6,8 +6,7 @@ from typing import Any, Callable, Dict, Union
 
 import inquirer
 
-from organizer.client.deezer.client import DeezerClient
-from organizer.client.spotify.client import SpotifyClient
+from organizer.client.base import IPlatformClient
 from organizer.factory.clients import ClientFactory
 
 MenuAction = Callable[[], None]
@@ -66,7 +65,7 @@ def build_menu(client_factory: ClientFactory) -> MenuItem:
     )
 
 
-def _playlist_tracks(client: Union[DeezerClient, SpotifyClient]) -> None:
+def _playlist_tracks(client: IPlatformClient[Any]) -> None:
     playlists = client.get_playlist_names()
     target = inquirer.list_input('Which one?', choices=playlists)
     client.show_playlist_info(target)
