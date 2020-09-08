@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 PlaylistType = TypeVar('PlaylistType')
 
 
-class IPlatformClient(abc.ABC, Generic[PlaylistType]):
+class IPlatformClient(Generic[PlaylistType], abc.ABC):
     @abc.abstractmethod
     def get_playlist_list(self) -> List[PlaylistType]:
         pass

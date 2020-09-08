@@ -42,7 +42,7 @@ class Stack(Generic[T]):
 
 
 class DateTimeEncoder(JSONEncoder):
-    def default(self, obj: Any) -> Optional[str]:
-        if isinstance(obj, (datetime.date, datetime.datetime)):
-            return obj.isoformat()
+    def default(self, o: Any) -> Optional[str]:
+        if isinstance(o, (datetime.date, datetime.datetime)):
+            return o.isoformat()
         return None

@@ -19,8 +19,8 @@ if TYPE_CHECKING:
 def _ensure_auth(func):  # type: ignore
     @wraps(func)
     def _inner(self: SpotifyClient, *args, **kwargs):  # type: ignore
-        if not self._spotify:
-            self._spotify = tk.Spotify(token=self._authenticator.token)
+        if not self._spotify:  # pylint: disable=W0212
+            self._spotify = tk.Spotify(token=self._authenticator.token)  # pylint: disable=W0212
         return func(self, *args, **kwargs)
 
     return _inner

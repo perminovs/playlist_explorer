@@ -19,10 +19,10 @@ render = ConsoleRender(theme=theme)
 
 
 class LogLevel(str, enum.Enum):
-    DEBUG = logging._levelToName[logging.DEBUG]
-    INFO = logging._levelToName[logging.INFO]
-    WARNING = logging._levelToName[logging.WARNING]
-    ERROR = logging._levelToName[logging.ERROR]
+    DEBUG = logging._levelToName[logging.DEBUG]  # pylint: disable=W0212
+    INFO = logging._levelToName[logging.INFO]  # pylint: disable=W0212
+    WARNING = logging._levelToName[logging.WARNING]  # pylint: disable=W0212
+    ERROR = logging._levelToName[logging.ERROR]  # pylint: disable=W0212
 
 
 @app.command()
@@ -61,7 +61,7 @@ def run_menu_loop(start_menu: MenuItem) -> None:
         elif callable(chosen):
             try:
                 chosen()
-            except Exception:
+            except Exception:  # pylint: disable=W0703
                 logger.exception('Something went wrong, try again')
         else:
             raise RuntimeError('Option not found')

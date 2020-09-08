@@ -19,7 +19,7 @@ class MenuItem:
     choices: Dict[str, Union[MenuAction, MenuItem]]
 
 
-def _(*args: Any, **kwargs: Any) -> None:
+def _(*args: Any, **kwargs: Any) -> None:  # pylint: disable=W0613
     pass
 
 
