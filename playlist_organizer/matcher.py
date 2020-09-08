@@ -1,8 +1,11 @@
 from dataclasses import dataclass, field
-from itertools import zip_longest
 from typing import Dict, List
 
+from Levenshtein import distance
+
 from playlist_organizer.client.base import Track
+
+MATCH_THRESHOLD = 3
 
 
 @dataclass
@@ -16,11 +19,26 @@ class TrackMatcher:
     def match(self, left: List[Track], right: List[Track]) -> MatchResult:
         result = MatchResult()
 
-        for t1, t2 in zip_longest(left, right):
-            if t1 and t2:
-                result.found[t1] = t2
-            elif t1 and not t2:
+        for idx, t1 in enumerate(left):
+            best_candidate = right[0]
+            best_distance = distance(t1.title, best_candidate.title)
+            for t2 in right[1:]:
+                new_dist = distance(t1.title, t2.title)
+                if new_dist > best_distance:
+                    continue
+                best_candidate = t2
+                best_distance = new_dist
+
+            if best_distance < MATCH_THRESHOLD:
+                result.found[t1] = best_candidate
+                right.remove(best_candidate)
+            else:
                 result.only_left.append(t1)
-            elif not t1 and t2:
-                result.only_right.append(t2)
+
+            if not right:
+                result.only_left.extend(left[idx + 1 :])
+                break
+
+        result.only_right = right
+
         return result
