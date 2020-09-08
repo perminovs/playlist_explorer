@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from itertools import zip_longest
-from typing import List, Dict
+from typing import Dict, List
 
 from playlist_organizer.client.base import Track
 
