@@ -39,7 +39,7 @@ class Token(BaseModel):
 
         with path.open() as f:
             try:
-                return cls(**json.load(f))
+                return cls.parse_raw(f.read())
             except (JSONDecodeError, TypeError, ValueError):
                 path.unlink()
         return None
