@@ -46,6 +46,9 @@ class Track(BaseModel):
         artists = '; '.join(self.artists)
         return f'{artists} - {self.title} ({self.album}) [added: {self.added_at}]'
 
+    def __hash__(self) -> int:
+        return hash(f'{self.source}-{self.external_id}')
+
     @classmethod
     def from_deezer(cls, track: DeezerTrack) -> Track:
         return cls(
