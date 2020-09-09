@@ -7,11 +7,10 @@ import pathlib
 import webbrowser
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from json import JSONDecodeError
 from typing import Optional
 
 import typer
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from playlist_organizer.client.auth.settings import BaseAuthSettings
 from playlist_organizer.utils import DateTimeEncoder
@@ -40,7 +39,7 @@ class Token(BaseModel):
         with path.open() as f:
             try:
                 return cls.parse_raw(f.read())
-            except (JSONDecodeError, TypeError, ValueError):
+            except ValidationError:
                 path.unlink()
         return None
 
