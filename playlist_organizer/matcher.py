@@ -15,21 +15,28 @@ class MatchResult:
     found: Dict[Track, Track] = field(default_factory=dict)
 
 
+def _distance(s1: str, s2: str) -> int:
+    return distance(_normalize(s1), _normalize(s2))
+
+
 class TrackMatcher:
+    def __init__(self, match_threshold: int = MATCH_THRESHOLD):
+        self._match_threshold = match_threshold
+
     def match(self, left: List[Track], right: List[Track]) -> MatchResult:
         result = MatchResult()
 
         for idx, t1 in enumerate(left):
             best_candidate = right[0]
-            best_distance = distance(t1.title, best_candidate.title)
+            best_distance = _distance(t1.title, best_candidate.title)
             for t2 in right[1:]:
-                new_dist = distance(t1.title, t2.title)
+                new_dist = _distance(t1.title, t2.title)
                 if new_dist > best_distance:
                     continue
                 best_candidate = t2
                 best_distance = new_dist
 
-            if best_distance < MATCH_THRESHOLD:
+            if best_distance <= self._match_threshold:
                 result.found[t1] = best_candidate
                 right.remove(best_candidate)
             else:
@@ -42,3 +49,8 @@ class TrackMatcher:
         result.only_right = right
 
         return result
+
+
+def _normalize(raw: str) -> str:
+    replaced = raw.lower().replace('remastered', '').replace('remaster', '').strip()
+    return ''.join(r for r in replaced if r.isalpha() or r.isdigit())

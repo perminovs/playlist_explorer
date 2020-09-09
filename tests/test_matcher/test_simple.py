@@ -3,12 +3,6 @@ import json
 import pytest
 
 from playlist_organizer.client.base import Track
-from playlist_organizer.matcher import TrackMatcher
-
-
-@pytest.fixture()
-def matcher():
-    return TrackMatcher()
 
 
 def _from_dump(path):
