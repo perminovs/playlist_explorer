@@ -162,6 +162,14 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "0.4.3"
 
 [[package]]
+category = "main"
+description = "Colorful worry-free console applications for Linux, Mac OS X, and Windows."
+name = "colorclass"
+optional = false
+python-versions = "*"
+version = "2.2.0"
+
+[[package]]
 category = "dev"
 description = "Decorators for Humans"
 name = "decorator"
@@ -1095,7 +1103,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "eb0e1bc72f0337ad4a806af46ddc1a8cf2b4d94a874d2167ef9ce87af515166c"
+content-hash = "a34c0a0b473abb78a035ae6519282104bf99f0140511e43453e04a6ca4333fc3"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -1159,6 +1167,9 @@ click = [
 colorama = [
     {file = "colorama-0.4.3-py2.py3-none-any.whl", hash = "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff"},
     {file = "colorama-0.4.3.tar.gz", hash = "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"},
+]
+colorclass = [
+    {file = "colorclass-2.2.0.tar.gz", hash = "sha256:b05c2a348dfc1aff2d502527d78a5b7b7e2f85da94a96c5081210d8e9ee8e18b"},
 ]
 decorator = [
     {file = "decorator-4.4.2-py2.py3-none-any.whl", hash = "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760"},
