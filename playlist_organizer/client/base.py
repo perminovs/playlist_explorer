@@ -43,8 +43,22 @@ class Track(BaseModel):
     external_id: str
 
     def __str__(self) -> str:
+        return f'{self._to_brief_str()} [added: {self.added_at}]'
+
+    def _to_brief_str(self) -> str:
         artists = '; '.join(self.artists)
-        return f'{artists} - {self.title} ({self.album}) [added: {self.added_at}]'
+        return f'{artists} - {self.title} ({self.album})'
+
+    def to_brief_str(self, max_len: int) -> str:
+        original = str(self)
+        if len(original) < max_len:
+            return original
+
+        brief_str = self._to_brief_str()
+        if len(brief_str) > max_len:
+            return brief_str[: max_len - 3] + '...'
+
+        return brief_str
 
     def __hash__(self) -> int:
         return hash(f'{self.source}-{self.external_id}')

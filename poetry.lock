@@ -1003,6 +1003,14 @@ docs = ["sphinx (>=3.1,<4.0)", "sphinx-rtd-theme", "sphinx-autodoc-typehints (>=
 tests = ["coverage (>=5.0,<6.0)", "pytest (>=5.4,<6.0)", "pytest-asyncio (>=0.11,<0.15)"]
 
 [[package]]
+category = "main"
+description = "Generate simple tables in terminals from a nested list of strings."
+name = "terminaltables"
+optional = false
+python-versions = "*"
+version = "3.1.0"
+
+[[package]]
 category = "dev"
 description = "A collection of helpers and mock objects for unit tests and doc tests."
 name = "testfixtures"
@@ -1087,7 +1095,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "3f9d8f4be631a57c318722dd47e320f1f6a7c89fb5fe49c4c39365a1c26940e8"
+content-hash = "eb0e1bc72f0337ad4a806af46ddc1a8cf2b4d94a874d2167ef9ce87af515166c"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -1508,6 +1516,9 @@ stevedore = [
 tekore = [
     {file = "tekore-3.0.0-py3-none-any.whl", hash = "sha256:748172e5df0d57693901704f8891b5ed12a263fcca1b45d0d40a163736c54dbd"},
     {file = "tekore-3.0.0.tar.gz", hash = "sha256:81e3ce0b6b41fb088e3f00beec966d242beef16d095b9bacede97b9655717af3"},
+]
+terminaltables = [
+    {file = "terminaltables-3.1.0.tar.gz", hash = "sha256:f3eb0eb92e3833972ac36796293ca0906e998dc3be91fbe1f8615b331b853b81"},
 ]
 testfixtures = [
     {file = "testfixtures-6.14.1-py2.py3-none-any.whl", hash = "sha256:30566e24a1b34e4d3f8c13abf62557d01eeb4480bcb8f1745467bfb0d415a7d9"},

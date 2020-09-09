@@ -6,8 +6,8 @@ import typer
 from inquirer.render import ConsoleRender
 from inquirer.themes import GreenPassion, term
 
-from playlist_organizer.factory.clients import ClientFactory
-from playlist_organizer.factory.menu import MenuItem, build_menu
+from playlist_organizer.menu.builder import MenuItem, build_menu
+from playlist_organizer.menu.factory import Factory
 from playlist_organizer.utils import Stack
 
 app = typer.Typer()
@@ -29,7 +29,7 @@ class LogLevel(str, enum.Enum):
 def main(log_level: LogLevel = LogLevel.INFO) -> None:
     logging.basicConfig(level=log_level.value, format='%(asctime)s [%(levelname)s]: %(message)s')
 
-    client_factory = ClientFactory()
+    client_factory = Factory()
     top_level_menu = build_menu(client_factory)
 
     run_menu_loop(start_menu=top_level_menu)

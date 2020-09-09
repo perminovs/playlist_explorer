@@ -7,10 +7,11 @@ from playlist_organizer.client.deezer.client import DeezerClient
 from playlist_organizer.client.deezer.settings import DeezerSettings
 from playlist_organizer.client.spotify.client import SpotifyClient
 from playlist_organizer.client.spotify.settings import SpotifySettings
+from playlist_organizer.matcher import TrackMatcher
 from playlist_organizer.utils import create_settings
 
 
-class ClientFactory:
+class Factory:
     @cached_property
     def _deezer_auth_settings(self) -> DeezerAuthSettings:
         return create_settings(DeezerAuthSettings, '.env')
@@ -34,3 +35,7 @@ class ClientFactory:
     @cached_property
     def spotify_client(self) -> SpotifyClient:
         return SpotifyClient(settings=SpotifySettings(), authenticator=self.spotify_auth)
+
+    @cached_property
+    def track_matcher(self) -> TrackMatcher:
+        return TrackMatcher()
