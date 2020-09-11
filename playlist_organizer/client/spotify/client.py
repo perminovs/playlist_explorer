@@ -4,7 +4,6 @@ from functools import cached_property, lru_cache, wraps
 from typing import TYPE_CHECKING, List
 
 import tekore as tk
-import typer
 from tekore._model import SimplePlaylist
 
 from playlist_organizer.client.base import IPlatformClient, Track
@@ -32,18 +31,14 @@ class SpotifyClient(IPlatformClient[SimplePlaylist]):
         self._authenticator = authenticator
         self._spotify: tk.Spotify = None
 
-    @_ensure_auth
-    def user_info(self) -> None:
-        typer.secho(str(self._current_user), fg='white')
-
     @cached_property
     @_ensure_auth
-    def _current_user(self) -> PrivateUser:
+    def current_user(self) -> PrivateUser:
         return self._spotify.current_user()  # type: ignore
 
     @_ensure_auth
     def get_playlist_list(self) -> List[SimplePlaylist]:
-        return _fetch_paginated(self._spotify.playlists, limit=50, user_id=self._current_user.id)  # type: ignore
+        return _fetch_paginated(self._spotify.playlists, limit=50, user_id=self.current_user.id)  # type: ignore
 
     def get_playlist_names(self) -> List[str]:
         return [p.name for p in self.get_playlist_list()]

@@ -19,7 +19,7 @@ def client(settings, authenticator, mocker):
 
     user = mocker.MagicMock()
     user.id = '12312eqasds2'
-    type(spotify_client)._current_user = PropertyMock(return_value=user)
+    type(spotify_client).current_user = PropertyMock(return_value=user)
     return spotify_client
 
 

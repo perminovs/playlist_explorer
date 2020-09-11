@@ -13,6 +13,7 @@ from playlist_organizer.client.spotify.client import SpotifyClient
 from playlist_organizer.matcher import TrackMatcher
 from playlist_organizer.menu.factory import Factory
 from playlist_organizer.menu.render import render_matches
+from playlist_organizer.utils import pprint_json
 
 MenuAction = Callable[[], None]
 
@@ -50,7 +51,7 @@ def build_menu(factory: Factory) -> MenuItem:
         title='What to do with Deezer?',
         choices={
             DeezerOptions.AUTH: lambda: _(factory.deezer_auth.token),
-            DeezerOptions.USER_INFO: factory.deezer_client.user_info,
+            DeezerOptions.USER_INFO: lambda: pprint_json(factory.deezer_client.user_info),
             DeezerOptions.PLAYLIST_INFO: lambda: _playlist_tracks(factory.deezer_client),
         },
     )
@@ -58,7 +59,7 @@ def build_menu(factory: Factory) -> MenuItem:
         title='What to do with Spotify?',
         choices={
             SpotifyOptions.AUTH: lambda: _(factory.spotify_auth.token),
-            SpotifyOptions.USER_INFO: factory.spotify_client.user_info,
+            SpotifyOptions.USER_INFO: lambda: typer.secho(str(factory.spotify_client.current_user), fg='white'),
             SpotifyOptions.PLAYLIST_INFO: lambda: _playlist_tracks(factory.spotify_client),
         },
     )

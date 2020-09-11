@@ -7,7 +7,6 @@ from playlist_organizer.client.auth.deezer import DeezerAuthenticator
 from playlist_organizer.client.base import IPlatformClient, Track
 from playlist_organizer.client.deezer.entities import PaginatedResponse, Playlist, PlaylistsResponse, PlaylistTracks
 from playlist_organizer.client.deezer.settings import DeezerSettings
-from playlist_organizer.utils import pprint_json
 
 PaginatedResponseType = TypeVar('PaginatedResponseType', bound=PaginatedResponse)
 
@@ -17,11 +16,8 @@ class DeezerClient(IPlatformClient[Playlist]):
         self._settings = settings
         self._authenticator = authenticator
 
-    def user_info(self) -> None:
-        pprint_json(self._user_info)
-
     @cached_property
-    def _user_info(self) -> Dict[str, Any]:
+    def user_info(self) -> Dict[str, Any]:
         resp = httpx.get(
             self._settings.user_info_url,
             params={'access_token': self._authenticator.token},
