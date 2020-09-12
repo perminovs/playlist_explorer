@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass, field
 from typing import Dict, List
 
@@ -6,6 +7,7 @@ from Levenshtein import distance
 from playlist_organizer.client.base import Track
 
 MATCH_THRESHOLD = 3
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -40,6 +42,12 @@ class TrackMatcher:
                 result.found[t1] = best_candidate
                 right.remove(best_candidate)
             else:
+                logger.debug(
+                    'Pair not found for %s.\nBest candidate: %s\nLevenshtein distance=%s',
+                    t1,
+                    best_candidate,
+                    best_distance,
+                )
                 result.only_left.append(t1)
 
             if not right:

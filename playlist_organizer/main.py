@@ -35,13 +35,13 @@ def main(log_level: LogLevel = LogLevel.INFO) -> None:
     run_menu_loop(start_menu=top_level_menu)
 
 
-def run_menu_loop(start_menu: MenuItem) -> None:
+def run_menu_loop(start_menu: MenuItem) -> None:  # pylint: disable=R0915
     _exit = 'EXIT'
     _back = 'BACK'
 
     current_menu = start_menu
     menu_history = Stack[MenuItem]()
-    while True:
+    while True:  # pylint: disable=R1702
         additional_choices = [_exit] if menu_history.is_empty() else [_back, _exit]
         choices = list(current_menu.choices) + additional_choices  # type: ignore
         option = inquirer.list_input(message=current_menu.title, choices=choices, render=render)
@@ -56,11 +56,16 @@ def run_menu_loop(start_menu: MenuItem) -> None:
         chosen = current_menu.choices[option]
 
         if isinstance(chosen, MenuItem):
-            menu_history.push(current_menu)
+            if next_item.id != current_menu.id:
+                menu_history.push(current_menu)
             current_menu = chosen
         elif callable(chosen):
             try:
-                chosen()
+                next_item = chosen()
+                if isinstance(next_item, MenuItem):
+                    if next_item.id != current_menu.id:
+                        menu_history.push(current_menu)
+                    current_menu = next_item
             except Exception:  # pylint: disable=W0703
                 logger.exception('Something went wrong, try again')
         else:
