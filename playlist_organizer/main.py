@@ -1,21 +1,21 @@
 import enum
 import logging
 
-import inquirer
 import typer
-from inquirer.render import ConsoleRender
-from inquirer.themes import GreenPassion, term
 
-from playlist_organizer.menu.builder import MenuItem, build_menu
-from playlist_organizer.menu.factory import Factory
-from playlist_organizer.utils import Stack
+from playlist_organizer.client.auth.deezer import DeezerAuthenticator
+from playlist_organizer.client.auth.settings import DeezerAuthSettings, SpotifyAuthSettings
+from playlist_organizer.client.auth.spotify import SpotifyAuthenticator
+from playlist_organizer.client.deezer.client import DeezerClient
+from playlist_organizer.client.deezer.settings import DeezerSettings
+from playlist_organizer.client.spotify.client import SpotifyClient
+from playlist_organizer.client.spotify.settings import SpotifySettings
+from playlist_organizer.matcher import TrackMatcher
+from playlist_organizer.menu.builder import Menu
+from playlist_organizer.utils import create_settings
 
 app = typer.Typer()
 logger = logging.getLogger(__name__)
-
-theme = GreenPassion()
-theme.List.unselected_color = term.yellow
-render = ConsoleRender(theme=theme)
 
 
 class LogLevel(str, enum.Enum):
@@ -29,44 +29,15 @@ class LogLevel(str, enum.Enum):
 def main(log_level: LogLevel = LogLevel.INFO) -> None:
     logging.basicConfig(level=log_level.value, format='%(asctime)s [%(levelname)s]: %(message)s')
 
-    client_factory = Factory()
-    top_level_menu = build_menu(client_factory)
+    deezer_settings = create_settings(DeezerAuthSettings, '.env')
+    deezer_authenticator = DeezerAuthenticator(deezer_settings)
 
-    run_menu_loop(start_menu=top_level_menu)
+    spotify_settings = create_settings(SpotifyAuthSettings, '.env')
+    spotify_authenticator = SpotifyAuthenticator(spotify_settings)
 
-
-def run_menu_loop(start_menu: MenuItem) -> None:  # pylint: disable=R0915
-    _exit = 'EXIT'
-    _back = 'BACK'
-
-    current_menu = start_menu
-    menu_history = Stack[MenuItem]()
-    while True:  # pylint: disable=R1702
-        additional_choices = [_exit] if menu_history.is_empty() else [_back, _exit]
-        choices = list(current_menu.choices) + additional_choices  # type: ignore
-        option = inquirer.list_input(message=current_menu.title, choices=choices, render=render)
-
-        if not option or option == _exit:
-            return
-
-        if option == _back:
-            current_menu = menu_history.pop()
-            continue
-
-        chosen = current_menu.choices[option]
-
-        if isinstance(chosen, MenuItem):
-            if next_item.id != current_menu.id:
-                menu_history.push(current_menu)
-            current_menu = chosen
-        elif callable(chosen):
-            try:
-                next_item = chosen()
-                if isinstance(next_item, MenuItem):
-                    if next_item.id != current_menu.id:
-                        menu_history.push(current_menu)
-                    current_menu = next_item
-            except Exception:  # pylint: disable=W0703
-                logger.exception('Something went wrong, try again')
-        else:
-            raise RuntimeError('Option not found')
+    menu = Menu(
+        deezer_client=DeezerClient(settings=DeezerSettings(), authenticator=deezer_authenticator),
+        spotify_client=SpotifyClient(settings=SpotifySettings(), authenticator=spotify_authenticator),
+        track_matcher=TrackMatcher(),
+    )
+    menu.run_menu_loop()

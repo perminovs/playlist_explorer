@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Generic, List, TypeVar
 
 from pydantic import BaseModel
 
+from playlist_organizer.client.auth.base import BaseAuthenticator
+
 if TYPE_CHECKING:
     from tekore._model import PlaylistTrack as SpotifyTrack
 
@@ -27,6 +29,15 @@ class IPlatformClient(Generic[PlaylistType], abc.ABC):
     @abc.abstractmethod
     def get_playlist_tracks(self, name: str) -> List[Track]:
         pass
+
+
+class BaseClient(IPlatformClient[PlaylistType], abc.ABC):
+    def __init__(self, authenticator: BaseAuthenticator):
+        self._authenticator = authenticator
+
+    @property
+    def token(self) -> str:
+        return self._authenticator.token
 
 
 class Platform(str, enum.Enum):

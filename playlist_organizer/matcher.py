@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Dict, List
 
 from Levenshtein import distance
@@ -15,6 +16,8 @@ class MatchResult:
     only_left: List[Track] = field(default_factory=list)
     only_right: List[Track] = field(default_factory=list)
     found: Dict[Track, Track] = field(default_factory=dict)
+    name: str = 'Match'
+    created_at: str = field(default_factory=lambda: datetime.now().strftime('%Y.%m.%d %H:%M:%S.%f'))
 
 
 def _distance(s1: str, s2: str) -> int:

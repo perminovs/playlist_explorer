@@ -4,17 +4,17 @@ from typing import Any, Dict, List, Type, TypeVar, cast
 import httpx
 
 from playlist_organizer.client.auth.deezer import DeezerAuthenticator
-from playlist_organizer.client.base import IPlatformClient, Track
+from playlist_organizer.client.base import BaseClient, Track
 from playlist_organizer.client.deezer.entities import PaginatedResponse, Playlist, PlaylistsResponse, PlaylistTracks
 from playlist_organizer.client.deezer.settings import DeezerSettings
 
 PaginatedResponseType = TypeVar('PaginatedResponseType', bound=PaginatedResponse)
 
 
-class DeezerClient(IPlatformClient[Playlist]):
+class DeezerClient(BaseClient[Playlist]):
     def __init__(self, settings: DeezerSettings, authenticator: DeezerAuthenticator) -> None:
         self._settings = settings
-        self._authenticator = authenticator
+        super().__init__(authenticator)
 
     @cached_property
     def user_info(self) -> Dict[str, Any]:

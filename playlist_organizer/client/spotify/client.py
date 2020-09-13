@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, List
 import tekore as tk
 from tekore._model import SimplePlaylist
 
-from playlist_organizer.client.base import IPlatformClient, Track
+from playlist_organizer.client.base import BaseClient, Track
 
 if TYPE_CHECKING:
     from tekore._model import PlaylistTrack, PrivateUser
@@ -25,11 +25,11 @@ def _ensure_auth(func):  # type: ignore
     return _inner
 
 
-class SpotifyClient(IPlatformClient[SimplePlaylist]):
+class SpotifyClient(BaseClient[SimplePlaylist]):
     def __init__(self, settings: SpotifySettings, authenticator: SpotifyAuthenticator):
         self._settings = settings
-        self._authenticator = authenticator
         self._spotify: tk.Spotify = None
+        super().__init__(authenticator)
 
     @cached_property
     @_ensure_auth

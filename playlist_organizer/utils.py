@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 T = TypeVar('T')
 
 
-def pprint_json(resp: Dict[str, Any]) -> None:
-    typer.secho(json.dumps(resp, ensure_ascii=False, indent=4, sort_keys=True), fg='white')
+def pprint_json(resp: Dict[str, Any], fg: str = 'white') -> None:
+    typer.secho(json.dumps(resp, ensure_ascii=False, indent=4, sort_keys=True), fg=fg)
 
 
 def create_settings(settings_cls: Type[T], env_file: str) -> T:
