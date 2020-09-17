@@ -46,7 +46,7 @@ class TrackMatcher:
                 right.remove(best_candidate)
             else:
                 logger.debug(
-                    'Pair not found for %s.\nBest candidate: %s\nLevenshtein distance=%s',
+                    'Pair not found for %s\nBest candidate: %s\nLevenshtein distance=%s',
                     t1,
                     best_candidate,
                     best_distance,
