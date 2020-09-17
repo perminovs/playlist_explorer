@@ -5,7 +5,6 @@ import logging
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Tuple, Union
 
-import inquirer
 import typer
 from inquirer.render import ConsoleRender
 from inquirer.themes import GreenPassion, term
@@ -128,7 +127,8 @@ class Menu:
 
             additional_choices = [_exit] if menu_history.is_empty() else [_back, _exit]
             choices = list(menu_choices) + additional_choices  # type: ignore
-            option = inquirer.list_input(message=current_menu.title, choices=choices, render=render)
+            idx = choose_from_inquirer_list(current_menu.title, items=choices, render=render)
+            option = choices[idx]
 
             if not option or option == _exit:
                 return

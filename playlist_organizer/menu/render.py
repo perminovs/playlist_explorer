@@ -1,8 +1,9 @@
-from typing import List, TypeVar
+from typing import List, Optional, TypeVar
 
 import inquirer
 import typer
 from colorclass import Color
+from inquirer.render import ConsoleRender
 from terminaltables import AsciiTable
 
 from playlist_organizer.client.base import Track
@@ -36,7 +37,7 @@ def _render_single(title: str, tracks: List[Track]) -> None:
     typer.secho(data.table)
 
 
-def choose_from_inquirer_list(title: str, items: List[T]) -> int:
+def choose_from_inquirer_list(title: str, items: List[T], render: Optional[ConsoleRender] = None) -> int:
     """Render inquirer.list_input with given <items> and return index of choosen item.
 
     Following call
@@ -53,5 +54,6 @@ def choose_from_inquirer_list(title: str, items: List[T]) -> int:
     answer: str = inquirer.list_input(
         title,
         choices=[f'{str(idx).rjust(last_idx_len)}. {item}' for idx, item in enumerate(items, start=1)],
+        render=render,
     )
     return int(answer[: answer.find('.')]) - 1  # no, I don't like regexps. Nobody likes
