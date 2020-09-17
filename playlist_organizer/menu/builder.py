@@ -3,7 +3,7 @@ from __future__ import annotations
 import enum
 import logging
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Tuple, Union
 
 import inquirer
 import typer
@@ -29,7 +29,23 @@ render = ConsoleRender(theme=theme)
 class MenuItem:
     title: str
     choices: Dict[str, Union[MenuAction, MenuItem]]
-    preparer: Optional[Callable[[], None]] = None
+
+    def prepare(self) -> None:
+        pass
+
+
+@dataclass
+class ProcessMatchMenuItem(MenuItem):
+    matches: MatchResult
+
+    MATCH_OPTION: str = 'Match track by handle'
+    CREATE_OPTION: str = 'Everything is ok! Create playlist copy'
+
+    def prepare(self) -> None:
+        render_matches(self.matches)
+        if (bool(self.matches.only_right) and bool(self.matches.only_left)) or self.MATCH_OPTION not in self.choices:
+            return
+        self.choices.pop(self.MATCH_OPTION)
 
 
 def _(*args: Any, **kwargs: Any) -> None:  # pylint: disable=W0613
@@ -100,6 +116,8 @@ class Menu:
         current_menu = self.top_level_menu_item
         menu_history = Stack[MenuItem]()
         while True:  # pylint: disable=R1702
+            current_menu.prepare()
+
             menu_choices = current_menu.choices.copy()
             logger.debug('In memory matches:\n%s', '\n'.join(m.name for m in self._matches))
             if menu_history.is_empty():
@@ -110,8 +128,6 @@ class Menu:
 
             additional_choices = [_exit] if menu_history.is_empty() else [_back, _exit]
             choices = list(menu_choices) + additional_choices  # type: ignore
-            if current_menu.preparer:
-                current_menu.preparer()
             option = inquirer.list_input(message=current_menu.title, choices=choices, render=render)
 
             if not option or option == _exit:
@@ -137,36 +153,15 @@ class Menu:
     def _get_menu_item_from_match(self, match: MatchResult) -> MenuItem:
         additional_choices = {}
         if bool(match.only_left) and bool(match.only_right):
-            additional_choices = {'Match track by handle': lambda: self._handle_link_tracks(match)}
+            additional_choices = {ProcessMatchMenuItem.MATCH_OPTION: lambda: self._handle_link_tracks(match)}
 
-        return MenuItem(
+        return ProcessMatchMenuItem(
             title='And what next?',
             choices={
                 **additional_choices,  # type: ignore
-                'Everything is ok! Create playlist copy': lambda: self._create_playlist_copy(match),
+                ProcessMatchMenuItem.CREATE_OPTION: lambda: self._create_playlist_copy(match),
             },
-            preparer=lambda: render_matches(match),
-        )
-
-    def _process_match_result(self, matches: MatchResult) -> MenuItem:
-        render_matches(matches)
-        logger.debug(
-            'Handle matches with %s pairs, %s only Deezer tracks and %s only Spotify tracks',
-            len(matches.found),
-            len(matches.only_left),
-            len(matches.only_right),
-        )
-
-        additional_choices = {}
-        if bool(matches.only_left) and bool(matches.only_right):
-            additional_choices = {'Match track by handle': lambda: self._handle_link_tracks(matches)}
-
-        return MenuItem(
-            title='And what next?',
-            choices={
-                **additional_choices,  # type: ignore
-                'Everything is ok! Create playlist copy': lambda: self._create_playlist_copy(matches),
-            },
+            matches=match,
         )
 
     def _match_playlists(self) -> None:
@@ -189,8 +184,6 @@ class Menu:
         matches.found[deezer_track] = spotify_track
         matches.only_left.remove(deezer_track)
         matches.only_right.remove(spotify_track)
-
-        render_matches(matches)
 
 
 def _choose_track(title: str, track_list: List[Track]) -> Track:
