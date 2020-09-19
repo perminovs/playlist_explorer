@@ -93,5 +93,5 @@ class Track(BaseModel):
             title=track.track.name,
             added_at=track.added_at,
             source=Platform.SPOTIFY,
-            external_id=track.track.id,
+            external_id=track.track.uri,
         )

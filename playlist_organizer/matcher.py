@@ -16,8 +16,13 @@ class MatchResult:
     only_left: List[Track] = field(default_factory=list)
     only_right: List[Track] = field(default_factory=list)
     found: Dict[Track, Track] = field(default_factory=dict)
-    name: str = 'Match'
+    left_name: str = 'Left'
+    right_name: str = 'Right'
     created_at: str = field(default_factory=lambda: datetime.now().strftime('%Y.%m.%d %H:%M:%S.%f'))
+
+    @property
+    def name(self) -> str:
+        return f'{self.left_name} -> {self.right_name} ({self.created_at})'
 
 
 def _distance(s1: str, s2: str) -> int:

@@ -4,7 +4,7 @@ from functools import cached_property, lru_cache, wraps
 from typing import TYPE_CHECKING, List
 
 import tekore as tk
-from tekore._model import SimplePlaylist
+from tekore._model import FullPlaylist, SimplePlaylist
 
 from playlist_organizer.client.base import BaseClient, Track
 
@@ -58,6 +58,18 @@ class SpotifyClient(BaseClient[SimplePlaylist]):
         tracks: List[PlaylistTrack]
         tracks = _fetch_paginated(self._spotify.playlist_items, playlist_id, limit=50)
         return [Track.from_spotify(t) for t in tracks]
+
+    @_ensure_auth
+    def create_playlist(self, name: str, public: bool = False) -> FullPlaylist:
+        return self._spotify.playlist_create(
+            user_id=self.current_user.id,
+            name=name,
+            public=public,
+        )
+
+    @_ensure_auth
+    def add_playlist_tracks(self, playlist: FullPlaylist, tracks: List[Track]) -> None:
+        pass
 
 
 @lru_cache()

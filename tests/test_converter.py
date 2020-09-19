@@ -35,5 +35,5 @@ def test_track_convert_from_spotify(raw_data_dir):
     assert track.artists
     assert track.album
     assert track.added_at
-    assert track.external_id
+    assert track.external_id == spotify_track.track.uri
     assert track.source is Platform.SPOTIFY

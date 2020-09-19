@@ -120,9 +120,7 @@ class Menu:
             menu_choices = current_menu.choices.copy()
             logger.debug('In memory matches:\n%s', '\n'.join(m.name for m in self._matches))
             if menu_history.is_empty():
-                matches_choices = {
-                    f'Process {m.name} ({m.created_at})': self._get_menu_item_from_match(m) for m in self._matches
-                }
+                matches_choices = {f'Process {m.name}': self._get_menu_item_from_match(m) for m in self._matches}
                 menu_choices.update(matches_choices)  # type: ignore
 
             additional_choices = [_exit] if menu_history.is_empty() else [_back, _exit]
@@ -170,7 +168,7 @@ class Menu:
             self._spotify_client, message='Choose playlist from Spotify'
         )
         matches = self._track_matcher.match(deezer_tracks, spotify_tracks)
-        matches.name = f'{deezer_name} -> {spotify_name}'
+        matches.left_name, matches.right_name = deezer_name, spotify_name
         self._matches.append(matches)
 
     def _create_playlist_copy(self, matches: MatchResult) -> None:
