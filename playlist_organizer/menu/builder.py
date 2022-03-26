@@ -173,7 +173,7 @@ class Menu:
 
     def _create_playlist_copy(self, matches: MatchResult) -> None:
         render_matches(matches)
-        typer.secho('LOL KEK CHEBUREK', bg='white')
+        typer.secho('Not implemented yet', bg='white')
 
     def _handle_link_tracks(self, matches: MatchResult) -> None:
         deezer_track = _choose_track('Which one from Deezer?', matches.only_left)
