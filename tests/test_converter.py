@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 from tekore._model import PlaylistTrack as SpotifyTrack
 

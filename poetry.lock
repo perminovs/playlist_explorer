@@ -16,7 +16,7 @@ files = [
 name = "anyio"
 version = "3.6.2"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.2"
 files = [
@@ -426,18 +426,6 @@ files = [
 
 [package.dependencies]
 pycparser = "*"
-
-[[package]]
-name = "chardet"
-version = "3.0.4"
-description = "Universal encoding detector for Python 2 and 3"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "chardet-3.0.4-py2.py3-none-any.whl", hash = "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"},
-    {file = "chardet-3.0.4.tar.gz", hash = "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae"},
-]
 
 [[package]]
 name = "charset-normalizer"
@@ -1054,57 +1042,61 @@ gitdb = ">=4.0.1,<5"
 
 [[package]]
 name = "h11"
-version = "0.9.0"
+version = "0.14.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 files = [
-    {file = "h11-0.9.0-py2.py3-none-any.whl", hash = "sha256:4bc6d6a1238b7615b266ada57e0618568066f57dd6fa967d1290ec9309b2f2f1"},
-    {file = "h11-0.9.0.tar.gz", hash = "sha256:33d4bca7be0fa039f4e84d50ab00531047e53d6ee8ffbc83501ea602c169cae1"},
+    {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
+    {file = "h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d"},
 ]
 
 [[package]]
 name = "httpcore"
-version = "0.10.2"
+version = "0.17.0"
 description = "A minimal low-level HTTP client."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "httpcore-0.10.2-py3-none-any.whl", hash = "sha256:afc1402fcaa6fca057bb3a9c6ccf6989a17bd0393b0cffbd778bac5fdd27446b"},
-    {file = "httpcore-0.10.2.tar.gz", hash = "sha256:93a4caf743e7ed29dbf7900515f0917babaa26bfaae6fb6c922ca1228519d400"},
+    {file = "httpcore-0.17.0-py3-none-any.whl", hash = "sha256:0fdfea45e94f0c9fd96eab9286077f9ff788dd186635ae61b312693e4d943599"},
+    {file = "httpcore-0.17.0.tar.gz", hash = "sha256:cc045a3241afbf60ce056202301b4d8b6af08845e3294055eb26b09913ef903c"},
 ]
 
 [package.dependencies]
-h11 = ">=0.8,<0.10"
+anyio = ">=3.0,<5.0"
+certifi = "*"
+h11 = ">=0.13,<0.15"
 sniffio = ">=1.0.0,<2.0.0"
 
 [package.extras]
-http2 = ["h2 (>=3.0.0,<4.0.0)"]
+http2 = ["h2 (>=3,<5)"]
+socks = ["socksio (>=1.0.0,<2.0.0)"]
 
 [[package]]
 name = "httpx"
-version = "0.14.3"
+version = "0.24.0"
 description = "The next generation HTTP client."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "httpx-0.14.3-py3-none-any.whl", hash = "sha256:3f2aa21d927ac56bfabdb82d079cf5ddd5b3147130dedc5fe8fed3a24e7a8d34"},
-    {file = "httpx-0.14.3.tar.gz", hash = "sha256:96bd4de4e6b742d672e2338720baf98518efaf85c86e0b48218e1bef9f272333"},
+    {file = "httpx-0.24.0-py3-none-any.whl", hash = "sha256:447556b50c1921c351ea54b4fe79d91b724ed2b027462ab9a329465d147d5a4e"},
+    {file = "httpx-0.24.0.tar.gz", hash = "sha256:507d676fc3e26110d41df7d35ebd8b3b8585052450f4097401c9be59d928c63e"},
 ]
 
 [package.dependencies]
 certifi = "*"
-chardet = ">=3.0.0,<4.0.0"
-httpcore = ">=0.10.0,<0.11.0"
-rfc3986 = {version = ">=1.3,<2", extras = ["idna2008"]}
+httpcore = ">=0.15.0,<0.18.0"
+idna = "*"
 sniffio = "*"
 
 [package.extras]
-brotli = ["brotlipy (>=0.7.0,<0.8.0)"]
-http2 = ["h2 (>=3.0.0,<4.0.0)"]
+brotli = ["brotli", "brotlicffi"]
+cli = ["click (>=8.0.0,<9.0.0)", "pygments (>=2.0.0,<3.0.0)", "rich (>=10,<14)"]
+http2 = ["h2 (>=3,<5)"]
+socks = ["socksio (>=1.0.0,<2.0.0)"]
 
 [[package]]
 name = "idna"
@@ -2411,22 +2403,22 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xm
 
 [[package]]
 name = "pytest-httpx"
-version = "0.8.0"
+version = "0.22.0"
 description = "Send responses to httpx."
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "pytest_httpx-0.8.0-py3-none-any.whl", hash = "sha256:55f9d89bab9985721b5cc77d16b8bb24fd044d23d17635f0b2d892a017fd6b7d"},
-    {file = "pytest_httpx-0.8.0.tar.gz", hash = "sha256:61fd82885ce7655f1ee9b32ebced87af869f19d035956300f0016ec63057e747"},
+    {file = "pytest_httpx-0.22.0-py3-none-any.whl", hash = "sha256:cefb7dcf66a4cb0601b0de05e576cca423b6081f3245e7912a4d84c58fa3eae8"},
+    {file = "pytest_httpx-0.22.0.tar.gz", hash = "sha256:3a82797f3a9a14d51e8c6b7fa97524b68b847ee801109c062e696b4744f4431c"},
 ]
 
 [package.dependencies]
-httpx = ">=0.14.0,<0.15.0"
-pytest = ">=6.0.0,<7.0.0"
+httpx = ">=0.24.0,<0.25.0"
+pytest = ">=6.0,<8.0"
 
 [package.extras]
-testing = ["pytest-asyncio (>=0.14.0,<0.15.0)", "pytest-cov (>=2.0.0,<3.0.0)"]
+testing = ["pytest-asyncio (>=0.20.0,<0.21.0)", "pytest-cov (>=4.0.0,<5.0.0)"]
 
 [[package]]
 name = "pytest-mock"
@@ -2748,24 +2740,6 @@ files = [
 six = "*"
 
 [[package]]
-name = "rfc3986"
-version = "1.5.0"
-description = "Validating URI References per RFC 3986"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "rfc3986-1.5.0-py2.py3-none-any.whl", hash = "sha256:a86d6e1f5b1dc238b218b012df0aa79409667bb209e58da56d0b94704e712a97"},
-    {file = "rfc3986-1.5.0.tar.gz", hash = "sha256:270aaf10d87d0d4e095063c65bf3ddbc6ee3d0b226328ce21e036f946e421835"},
-]
-
-[package.dependencies]
-idna = {version = "*", optional = true, markers = "extra == \"idna2008\""}
-
-[package.extras]
-idna2008 = ["idna"]
-
-[[package]]
 name = "rfc3986-validator"
 version = "0.1.1"
 description = "Pure python rfc3986 validator"
@@ -2915,24 +2889,18 @@ pbr = ">=2.0.0,<2.1.0 || >2.1.0"
 
 [[package]]
 name = "tekore"
-version = "3.7.1"
+version = "4.6.0"
 description = "Client for the Spotify Web API"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "tekore-3.7.1-py3-none-any.whl", hash = "sha256:0cd06bbb467fd541752e4fdc91423fb029227b6616112889bd5290ef98ef1720"},
-    {file = "tekore-3.7.1.tar.gz", hash = "sha256:e02383a954330be5847cd993afce845151978e66bf5b63dcdd63c3ca6d7ae10f"},
+    {file = "tekore-4.6.0-py3-none-any.whl", hash = "sha256:fc96d294e0bc94d260bb767411d814bc611484f63c44181e6e82d554cb298105"},
+    {file = "tekore-4.6.0.tar.gz", hash = "sha256:f4375c5806c0d4f2f1aa526403c78d323d260888598fd253e1fd46127b68b27e"},
 ]
 
 [package.dependencies]
-httpx = ">=0.11,<0.18"
-
-[package.extras]
-checks = ["doc8", "flake8", "flake8-bugbear", "pydocstyle", "pygments", "tox (>=3.0,<4.0)"]
-dev = ["coverage (>=5.0,<6.0)", "doc8", "flake8", "flake8-bugbear", "pydocstyle", "pygments", "pytest (>=5.4,<6.0)", "pytest-asyncio (>=0.11,<0.15)", "sphinx (>=3.1,<4.0)", "sphinx-autodoc-typehints (>=1.11,<2.0)", "sphinx-rtd-theme", "tox (>=3.0,<4.0)"]
-docs = ["sphinx (>=3.1,<4.0)", "sphinx-autodoc-typehints (>=1.11,<2.0)", "sphinx-rtd-theme"]
-tests = ["coverage (>=5.0,<6.0)", "pytest (>=5.4,<6.0)", "pytest-asyncio (>=0.11,<0.15)"]
+httpx = ">=0.15,<0.25"
 
 [[package]]
 name = "terminado"
@@ -3303,4 +3271,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "761661bdaf448d3f48d925086821c899a79bc7ce126546e3db02030ccac38b59"
+content-hash = "75991177ee535e7ca1199c8efe9d2702b25e54fc9dc4891ceef33f1c4096d391"

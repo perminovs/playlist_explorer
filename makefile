@@ -9,7 +9,7 @@ lint:
 	$(BIN)black --target-version py310 --skip-string-normalization --line-length=119 --check $(CODE) $(TEST)
 
 pretty:
-	$(BIN)isort --apply --recursive $(CODE) $(TEST)
+	$(BIN)isort $(CODE) $(TEST)
 	$(BIN)black --target-version py310 --skip-string-normalization --line-length=119 $(CODE) $(TEST)
 
 plint: pretty lint

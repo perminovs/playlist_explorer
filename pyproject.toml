@@ -6,11 +6,11 @@ authors = ["persi <perminov-s-i@yandex.ru>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-httpx = "^0.14.2"
+httpx = "^0.24.0"
 pydantic = {extras = ["dotenv"], version = "^1.6.1"}
 inquirer = "^2.7.0"
 typer = "^0.7.0"
-tekore = "^3.0.0"
+tekore = "^4.6.0"
 python-Levenshtein = "^0.12.0"
 terminaltables = "^3.1.0"
 colorclass = "^2.2.0"
@@ -20,12 +20,12 @@ flake8-awesome = "^1.3.0"
 ipython = "^8.13.1"
 pytest = "^6.0.1"
 pytest-mock = "^3.3.1"
-pytest-httpx = "^0.8.0"
 pylint = "^2.17.3"
 jupyterlab = "^2.2.8"
 mypy = "^1.2.0"
 typed-ast = "^1.5.4"
 black = "^23.3.0"
+pytest-httpx = "^0.22.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
