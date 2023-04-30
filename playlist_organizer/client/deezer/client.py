@@ -1,4 +1,4 @@
-from functools import cached_property, lru_cache
+from functools import cache, cached_property
 from typing import Any, Dict, List, Type, TypeVar, cast
 
 import httpx
@@ -49,15 +49,19 @@ class DeezerClient(BaseClient[Playlist]):
         )
         return [Track.from_deezer(t) for t in tracks]
 
-    @lru_cache()
     def _fetch_paginated(self, url: str, limit: int, model_cls: Type[PaginatedResponseType]) -> List[Any]:
-        acc = []
-        while True:
-            if not url:
-                break
-            resp = httpx.get(url, params={'access_token': self._authenticator.token, 'limit': limit})
-            resp.raise_for_status()
-            page = model_cls.parse_obj(resp.json())
-            acc.extend(page.data)
-            url = page.next  # type: ignore
-        return acc
+        return _fetch_paginated(url, limit, model_cls, self._authenticator.token)
+
+
+@cache
+def _fetch_paginated(url: str, limit: int, model_cls: Type[PaginatedResponseType], token: str) -> List[Any]:
+    acc = []
+    while True:
+        if not url:
+            break
+        resp = httpx.get(url, params={'access_token': token, 'limit': limit})
+        resp.raise_for_status()
+        page = model_cls.parse_obj(resp.json())
+        acc.extend(page.data)
+        url = page.next  # type: ignore
+    return acc

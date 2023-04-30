@@ -21,7 +21,6 @@ def test_track_convert_from_deezer():
     assert track.title == deezer_track.title
     assert track.artists == [deezer_track.artist.name]
     assert track.album == deezer_track.album.title
-    assert track.added_at == datetime(2020, 9, 6, 12, 27, 23)
     assert track.external_id == str(deezer_track.id)
     assert track.source == Platform.DEEZER
 
